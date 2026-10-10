@@ -32,6 +32,13 @@ MAX_POSTS_PER_ACCOUNT = 30
 MAX_COMMENTS_PER_POST = 15   # Apify FREE plan has a $5/month limit; 50/post could cost ~$10 per refresh
 MAX_X_ITEMS = 300
 
+# ---- Incremental (weekly) refresh: fetch only what's newer than data/masmovil.db ----
+INCREMENTAL_OVERLAP_DAYS = 1      # actor date filters are day-granular; overlap 1 day, dedupe by item id
+COMMENT_RECHECK_DAYS = 10         # re-read comment counters of owned posts this recent (> weekly cadence)
+MAX_POSTS_PER_RUN = 15            # per account/hashtag per incremental run (≈ 3-4 posts/week observed)
+MAX_X_ITEMS_INCREMENTAL = 100     # FREE plan returns ~10 tweets/run anyway; hard cap for safety
+STORE_FIRST_PAGE_INCREMENTAL = 100
+
 # ---- Apify actors (public Apify Store) ----
 ACTORS = {
     "facebook_posts": "apify~facebook-posts-scraper",

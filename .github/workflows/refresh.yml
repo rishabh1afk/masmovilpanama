@@ -2,13 +2,13 @@ name: Refresh sentiment data
 
 on:
   schedule:
-    - cron: "30 0 * * *"   # 00:30 UTC = 06:00 IST, daily
+    - cron: "30 0 * * 1"   # weekly: Monday 00:30 UTC = Monday 06:00 IST (UTC+5:30)
   workflow_dispatch:
     inputs:
       full:
-        description: "Also pull Facebook / Instagram / TikTok (≈ US$2 of Apify credit)"
+        description: "Full 90-day re-pull ignoring watermarks (≈ US$1.5-2 of Apify credit). Leave off for a cheap incremental run."
         type: boolean
-        default: true
+        default: false
 
 permissions:
   contents: write            # needed to commit the refreshed data file
@@ -45,25 +45,15 @@ jobs:
           path: .hf
           key: hf-xlmr-sentiment-opus-mt-es-en-minilm-v2
 
-      # Budget: the Apify FREE plan allows US$5/month and a full social pull costs ≈ US$2.
-      # So daily runs pull app stores (free) + X (≈ $0.004); Facebook/Instagram/TikTok are pulled
-      # on the 1st and 15th of each month, or on a manual run with "full" ticked.
-      - name: Choose sources
-        id: src
-        run: |
-          DOM=$(date -u +%d)
-          if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "${{ inputs.full }}" = "true" ]; then
-            echo "only=" >> "$GITHUB_OUTPUT"
-          elif [ "$DOM" = "01" ] || [ "$DOM" = "15" ]; then
-            echo "only=" >> "$GITHUB_OUTPUT"
-          else
-            echo "only=google_play,app_store,x,linkedin" >> "$GITHUB_OUTPUT"
-          fi
-
-      - name: Pull sources and analyse
+      # Budget: Apify FREE plan = US$5/month. One weekly run covers ALL sources incrementally: each collector
+      # reads its watermark from data/masmovil.db and asks only for items newer than that (actor date filters,
+      # small result limits), skips stored ids, and re-pulls comments only for posts whose comment counter grew.
+      # Sentiment/translation/categorisation run only on the new items (cached per text hash / item id).
+      - name: Pull new items from all sources and analyse
         env:
           APIFY_TOKEN: ${{ secrets.APIFY_TOKEN }}   # repo Actions secret; masked in logs
-        run: python refresh.py --only "${{ steps.src.outputs.only }}"
+          FULL: ${{ github.event_name == 'workflow_dispatch' && inputs.full && '--full' || '' }}
+        run: python refresh.py $FULL
 
       - name: Commit refreshed data
         run: |

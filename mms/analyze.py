@@ -1,9 +1,10 @@
 """Normalize raw source files -> SQLite (data/masmovil.db) with sentiment, themes,
-asks and English translations. NLP results are cached by text hash so re-running
-is cheap.  Run: python -m mms.analyze"""
+asks and English translations. Incremental: only items not yet stored are analysed and
+appended; NLP results are also cached by text hash.  Run: python -m mms.analyze"""
 import json, os, sqlite3, hashlib, datetime as dt
 from . import config as C
 from .taxonomy import themes_for, asks_for, has_request
+from .state import ensure_fetch_state
 
 os.environ.setdefault("HF_HOME", str(C.HF_HOME))
 SENT_MODEL = "cardiffnlp/twitter-xlm-roberta-base-sentiment"
@@ -69,103 +70,102 @@ def run_nlp(con, texts):
     con.commit()
 
 
+COLS = """id TEXT PRIMARY KEY, channel TEXT, kind TEXT, date TEXT, text TEXT, text_en TEXT,
+                   lang TEXT, author TEXT, rating REAL, app_version TEXT, likes REAL, comments REAL, shares REAL,
+                   views REAL, url TEXT, parent_url TEXT, sentiment TEXT, score REAL, theme TEXT, themes TEXT,
+                   asks TEXT, has_request INT"""
+
+
+def build_row(con, i):
+    """Sentiment/theme row for one item; NLP comes from nlp_cache (run_nlp must have run on its text)."""
+    t = i["text"] or ""
+    r = con.execute("SELECT lang,p_neg,p_neu,p_pos,en FROM nlp_cache WHERE hash=?", (h(t),)).fetchone() if t else None
+    lang, pn, pu, pp, en = r if r else (None, None, None, None, None)
+    if i["kind"] == "owned_post":
+        label, score = None, None
+    elif r:
+        score = pp - pn
+        label = ["negative", "neutral", "positive"][max(range(3), key=lambda k: (pn, pu, pp)[k])]
+        # Store reviews: when the text model is unsure (neutral), the star rating decides.
+        if label == "neutral" and i.get("rating"):
+            label = "negative" if i["rating"] <= 2 else "positive" if i["rating"] >= 4 else "neutral"
+    elif i.get("rating"):  # rating-only review
+        label = "negative" if i["rating"] <= 2 else "positive" if i["rating"] >= 4 else "neutral"
+        score = (i["rating"] - 3) / 2
+    else:
+        label, score = None, None
+    th = themes_for(t, i["channel"])
+    asks = asks_for(t, i["channel"])
+    is_ask = bool(asks) and (label == "negative" or (i.get("rating") or 5) <= 2 or has_request(t))
+    return (i["id"], i["channel"], i["kind"], i["date"], t, en, lang, i.get("author"), i.get("rating"),
+            i.get("app_version"), i.get("likes"), i.get("comments"), i.get("shares"), i.get("views"),
+            i.get("url"), i.get("parent_url"), label, score, th[0], json.dumps(th), json.dumps(asks if is_ask else []),
+            int(has_request(t)))
+
+
 def main():
+    """Incremental: append NEW items from this run's raw files to the existing `items` table.
+    Items already stored are never re-analysed or rewritten; NLP (sentiment + translation) runs only on
+    texts not in nlp_cache. Every channel accumulates history; X keeps only the last LOOKBACK_DAYS days
+    (as before). Sources that failed or weren't pulled keep their stored rows."""
     con = db()
-    status, items = {}, []
+    ensure_fetch_state(con)
+    con.execute(f"CREATE TABLE IF NOT EXISTS items ({COLS})")
+    status, items, fetch_state = {}, [], []
     for f in sorted(C.RAW.glob("*.json")):
         if f.name.endswith(".raw.json") or f.name == "x_mcp_import.json":
             continue
         j = json.loads(f.read_text())
-        status[j["source"]] = {k: v for k, v in j.items() if k != "items"}
+        status[j["source"]] = {k: v for k, v in j.items() if k not in ("items", "fetch_state")}
         items.extend(j["items"])
-    # Sources not pulled in this run (e.g. socials on non-social days in GitHub Actions, where raw caches
-    # aren't persisted) keep their previous status; their rows are carried over below.
+        fetch_state.extend((j["source"], s["post_url"], s["comments_seen"]) for s in j.get("fetch_state") or [])
+    pulled = set(status)
     try:
         prev_status = json.loads(C.STATUS_PATH.read_text())
     except Exception:
         prev_status = {}
-    carried = [s for s in prev_status if s not in status]
-    for s in carried:
-        status[s] = prev_status[s]
-    C.STATUS_PATH.write_text(json.dumps(status, indent=2, ensure_ascii=False))
-    texts = [i["text"] for i in items if i["text"] and i["kind"] != "owned_post"]
-    run_nlp(con, texts)
-    rows = []
+    for s in prev_status:
+        if s not in status:   # not pulled in this run: keep previous status as-is
+            status[s] = prev_status[s]
+
+    # skip anything already stored (collectors already dedupe; this also covers stale/hand-made raw files)
+    known = {r[0] for r in con.execute("SELECT id FROM items")}
+    new, seen = [], set()
     for i in items:
-        t = i["text"] or ""
-        r = con.execute("SELECT lang,p_neg,p_neu,p_pos,en FROM nlp_cache WHERE hash=?", (h(t),)).fetchone() if t else None
-        lang, pn, pu, pp, en = r if r else (None, None, None, None, None)
-        if i["kind"] == "owned_post":
-            label, score = None, None
-        elif r:
-            score = pp - pn
-            label = ["negative", "neutral", "positive"][max(range(3), key=lambda k: (pn, pu, pp)[k])]
-            # Store reviews: when the text model is unsure (neutral), the star rating decides.
-            if label == "neutral" and i.get("rating"):
-                label = "negative" if i["rating"] <= 2 else "positive" if i["rating"] >= 4 else "neutral"
-        elif i.get("rating"):  # rating-only review
-            label = "negative" if i["rating"] <= 2 else "positive" if i["rating"] >= 4 else "neutral"
-            score = (i["rating"] - 3) / 2
-        else:
-            label, score = None, None
-        th = themes_for(t, i["channel"])
-        asks = asks_for(t, i["channel"])
-        is_ask = bool(asks) and (label == "negative" or (i.get("rating") or 5) <= 2 or has_request(t))
-        rows.append((i["id"], i["channel"], i["kind"], i["date"], t, en, lang, i.get("author"), i.get("rating"),
-                     i.get("app_version"), i.get("likes"), i.get("comments"), i.get("shares"), i.get("views"),
-                     i.get("url"), i.get("parent_url"), label, score, th[0], json.dumps(th), json.dumps(asks if is_ask else []),
-                     int(has_request(t))))
-    # Keep the last good data for any source that failed this run (e.g. a flaky actor or a bad token),
-    # so one failure doesn't blank a channel on the hosted dashboard.
-    fresh = {r[1] for r in rows}
-    kept = []
-    has_items = con.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='items'").fetchone()
-    if has_items:
-        for src, st in status.items():
-            if st.get("status") in ("failed",) and src not in fresh:
-                old_rows = con.execute("SELECT * FROM items WHERE channel=?", (src,)).fetchall()
-                if old_rows:
-                    kept.extend(old_rows)
-                    st["status"] = "stale"
-                    st["reason"] = f"Refresh failed ({st.get('reason', '')[:120]}); showing last good data"
-                    st["count"] = len(old_rows)
-                    ds = sorted(r[3] for r in old_rows if r[3])
-                    st["date_min"], st["date_max"] = (ds[0], ds[-1]) if ds else (None, None)
-        if kept:
-            C.STATUS_PATH.write_text(json.dumps(status, indent=2, ensure_ascii=False))
-    # X: Apify's FREE plan returns only ~10 tweets per run, so accumulate X history across refreshes
-    # (dedupe by id, keep the last LOOKBACK_DAYS days).
-    if has_items and "x" in fresh:
-        cutoff = (dt.datetime.now(dt.timezone.utc) - dt.timedelta(days=C.LOOKBACK_DAYS)).isoformat()
-        ids = {r[0] for r in rows}
-        old_x = [r for r in con.execute("SELECT * FROM items WHERE channel='x' AND date>=?", (cutoff,)).fetchall() if r[0] not in ids]
-        kept.extend(old_x)
-        if old_x and "x" in status:
-            st = status["x"]
-            allx = [r for r in rows if r[1] == "x"] + old_x
-            ds = sorted(r[3] for r in allx if r[3])
-            st["note"] = (st.get("note") or "") + f"; accumulated with {len(old_x)} earlier X items (90-day window)"
-            st["count"] = len(allx)
-            st["date_min"], st["date_max"] = ds[0], ds[-1]
-            C.STATUS_PATH.write_text(json.dumps(status, indent=2, ensure_ascii=False))
-    for s in carried:
-        old_rows = con.execute("SELECT * FROM items WHERE channel=?", (s,)).fetchall() if has_items else []
-        kept.extend(old_rows)
-        if not old_rows and status[s].get("status") not in ("not_connected",):
-            status[s] = dict(source=s, status="pending", count=0, cost_usd=0.0, date_min=None, date_max=None,
-                             fetched_at=status[s].get("fetched_at"),
-                             reason="Not pulled yet in this deployment; included in the next full refresh")
-    if carried:
-        C.STATUS_PATH.write_text(json.dumps(status, indent=2, ensure_ascii=False))
-    rows.extend(kept)
-    con.execute("DROP TABLE IF EXISTS items")
-    con.execute("""CREATE TABLE items (id TEXT PRIMARY KEY, channel TEXT, kind TEXT, date TEXT, text TEXT, text_en TEXT,
-                   lang TEXT, author TEXT, rating REAL, app_version TEXT, likes REAL, comments REAL, shares REAL,
-                   views REAL, url TEXT, parent_url TEXT, sentiment TEXT, score REAL, theme TEXT, themes TEXT,
-                   asks TEXT, has_request INT)""")
-    con.executemany("INSERT OR REPLACE INTO items VALUES (" + ",".join("?" * 22) + ")", rows)
+        if i["id"] in known or i["id"] in seen:
+            continue
+        seen.add(i["id"])
+        new.append(i)
+    run_nlp(con, [i["text"] for i in new if i["text"] and i["kind"] != "owned_post"])
+    rows = [build_row(con, i) for i in new]
+    con.executemany("INSERT OR IGNORE INTO items VALUES (" + ",".join("?" * 22) + ")", rows)
+    if fetch_state:
+        now = dt.datetime.now(dt.timezone.utc).isoformat()
+        con.executemany("INSERT OR REPLACE INTO fetch_state VALUES (?,?,?,?)", [(*s, now) for s in fetch_state])
+    # X: keep a rolling LOOKBACK_DAYS window (unchanged behaviour)
+    cutoff = (dt.datetime.now(dt.timezone.utc) - dt.timedelta(days=C.LOOKBACK_DAYS)).isoformat()
+    pruned = con.execute("DELETE FROM items WHERE channel='x' AND date < ?", (cutoff,)).rowcount
     con.commit()
-    print(f"items table: {len(rows)} rows")
+
+    # status: counts/dates describe everything stored for the channel; `new` = added this run
+    added = {}
+    for r in rows:
+        added[r[1]] = added.get(r[1], 0) + 1
+    for src, st in status.items():
+        n, dmin, dmax = con.execute("SELECT count(*), min(date), max(date) FROM items WHERE channel=?", (src,)).fetchone()
+        if st.get("status") == "failed" and n:
+            st["status"] = "stale"
+            st["reason"] = f"Refresh failed ({(st.get('reason') or '')[:120]}); showing last good data"
+        elif not n and st.get("status") not in ("not_connected", "failed"):
+            st.update(status="pending", reason="Not pulled yet in this deployment; included in the next refresh")
+        if src in pulled:
+            st["new"] = added.get(src, 0)
+        st["count"], st["date_min"], st["date_max"] = n, dmin, dmax
+    C.STATUS_PATH.write_text(json.dumps(status, indent=2, ensure_ascii=False))
+    total = con.execute("SELECT count(*) FROM items").fetchone()[0]
+    print(f"items table: {total} rows (+{len(rows)} new, {len(items) - len(new)} already stored skipped, {pruned} X rows aged out)")
+    con.close()
+    return dict(new=len(rows), skipped=len(items) - len(new), total=total, pruned=pruned)
 
 
 if __name__ == "__main__":

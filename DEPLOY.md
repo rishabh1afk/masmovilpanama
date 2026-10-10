@@ -1,8 +1,8 @@
-# Deploying to Streamlit Community Cloud (daily auto-refresh)
+# Deploying to Streamlit Community Cloud (weekly incremental auto-refresh)
 
 How it fits together:
 - **GitHub repo** holds the code plus the precomputed results (`data/masmovil.db`, `data/status.json`).
-- **GitHub Actions** (`.github/workflows/refresh.yml`) runs every day at **06:00 IST** (00:30 UTC), and you can also start it by hand.
+- **GitHub Actions** (`.github/workflows/refresh.yml`) runs once a week, **Monday 06:00 IST** (Monday 00:30 UTC), pulling only new items from every source, and you can also start it by hand.
   It pulls the app stores (free) and Facebook, Instagram, TikTok and X through Apify (using the `APIFY_TOKEN` secret), runs the analysis
   (XLM-RoBERTa sentiment + Marian ES→EN translation on CPU, with the Hugging Face models cached), then commits the updated DB.
 - **Streamlit Community Cloud** serves `streamlit_app.py`. It only reads the DB: no ML models, about 200 MB RAM.
@@ -16,7 +16,7 @@ How it fits together:
 3. **Add the Apify secret:** repo → Settings → *Secrets and variables* → *Actions* → *New repository secret*
    → Name `APIFY_TOKEN`, Value = your Apify API token (Apify Console → Settings → API & Integrations; it starts with `apify_api_`).
 4. **Enable Actions write access:** Settings → Actions → General → *Workflow permissions* → **Read and write permissions** → Save.
-5. **First refresh:** Actions tab → *Refresh sentiment data* → *Run workflow* ("full" ticked = also socials, ≈ $2). The first run downloads about 1.5 GB of models
+5. **First refresh:** Actions tab → *Refresh sentiment data* → *Run workflow* (leave "full" unticked for an incremental run; ticked = full 90-day re-pull, ≈ $1.5–2). The first run downloads about 1.5 GB of models
    (roughly 10–15 min); after that, runs are quicker because only new texts get analysed.
 6. **Streamlit Cloud:** go to https://share.streamlit.io → sign in with GitHub (rishabh1afk) → authorise access to private repos
    → *Create app* → *Deploy a public app from GitHub* (the app's visibility is set separately in sharing settings) →
@@ -30,8 +30,8 @@ How it fits together:
 - Change the schedule by editing `cron` in `.github/workflows/refresh.yml` (it's in UTC).
 - If a source fails in a run, the dashboard keeps showing its last good data with status **stale** and the reason.
 - Apify cost: a full social pull measured **≈ US$1.97** (10 Oct 2026). The Apify FREE plan caps spend at $5/month, so the
-  workflow pulls app stores + X daily and Facebook/Instagram/TikTok on the 1st and 15th, or on a manual run with "full" ticked.
-  On a paid Apify plan you can make socials daily by editing the "Choose sources" step.
+  weekly run is incremental (only items newer than the DB, comments only where counters grew): ≈ US$1.2–1.8/month.
+  See README → "Weekly incremental refresh".
 - X in the cloud comes from Apify only (`apidojo/tweet-scraper`). The one-off X import used locally isn't committed.
 
 ## Insights step

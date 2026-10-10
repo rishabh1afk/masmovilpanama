@@ -8,8 +8,10 @@ shows it all in a Streamlit dashboard.
 ```bash
 cd /workspace/masmovil-sentiment
 MMS_ALLOW_REFRESH=1 .venv/bin/streamlit run streamlit_app.py --server.port 8501   # dashboard → http://localhost:8501 (refresh button shown only with MMS_ALLOW_REFRESH=1)
-.venv/bin/python refresh.py                            # re-pull every source and re-analyse (also the 🔄 button in the UI)
+.venv/bin/python refresh.py                            # incremental: pull only items newer than data/masmovil.db, analyse only those
 .venv/bin/python refresh.py --only google_play,app_store   # pull selected sources only
+.venv/bin/python refresh.py --full                     # ignore watermarks: full 90-day re-pull (stored items still skipped)
+.venv/bin/python tests/test_incremental.py             # offline test of the incremental logic (fake Apify, no credit)
 .venv/bin/python refresh.py --analyze-only             # re-run analysis on cached raw data (no credits used)
 .venv/bin/python build_snapshot.py                     # → dashboard_snapshot.html (self-contained, interactive Plotly)
 .venv/bin/python screenshot.py                         # → dashboard.png (headless Chrome via Playwright)
@@ -77,5 +79,19 @@ token in `APIFY_TOKEN` and press **Refresh data** to connect the social sources.
 
 ## Actual Apify cost (first full run, 10 Oct 2026, Apify FREE plan, $5/month limit)
 Facebook $0.40 · Instagram $1.04 · TikTok $0.53 · X $0.004, so **≈ $1.97 per full social pull**. Every run also has a hard
-`maxTotalChargeUsd` cap (posts $0.50, comments $1.25, X $0.20). On the FREE plan the GitHub workflow runs daily for app stores + X,
-and pulls Facebook/Instagram/TikTok only on the 1st and 15th (or on a manual run with "full" ticked), which keeps it inside $5/month.
+`maxTotalChargeUsd` cap (posts $0.50, comments $1.25, X $0.20).
+
+## Weekly incremental refresh (current setup)
+The GitHub workflow runs **once a week, Monday 00:30 UTC = Monday 06:00 IST**, and pulls **all** sources in that one run,
+strictly incrementally (`mms/state.py` reads per-source watermarks from `data/masmovil.db`):
+- **Google Play / App Store** (free): page newest-first and stop at the first already-stored review.
+- **Facebook / Instagram / TikTok**: posts only since the newest stored post (−1 day overlap, and at least the last
+  `COMMENT_RECHECK_DAYS`=10 days so recent posts' comment counters are re-read), max `MAX_POSTS_PER_RUN`=15 results.
+  Comments are re-pulled **only for posts whose public comment counter grew** since the last pull (`fetch_state` table);
+  Facebook also uses `onlyCommentsNewerThan` + recent-activity sort; Instagram (no date filter) asks only for as many
+  comments as the counter grew by (≤15).
+- **X**: `since:<newest stored date − 1 day>`, max 100 items.
+- Already-stored ids are dropped; `mms.analyze` appends only new rows, sentiment/translation run only on new texts and
+  `mms.insights` classifies/embeds only new items (cached by item id + text hash).
+Expected Apify spend ≈ US$0.25–0.40 per weekly run ≈ **US$1.2–1.8/month** (vs ≈ US$3–4/month before).
+A manual run with **full** ticked (default off) ignores the watermarks and re-pulls the 90-day window (≈ US$1.5–2).
