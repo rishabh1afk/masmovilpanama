@@ -43,7 +43,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: .hf
-          key: hf-xlmr-sentiment-opus-mt-es-en-v1
+          key: hf-xlmr-sentiment-opus-mt-es-en-minilm-v2
 
       # Budget: the Apify FREE plan allows US$5/month and a full social pull costs ≈ US$2.
       # So daily runs pull app stores (free) + X (≈ $0.004); Facebook/Instagram/TikTok are pulled
@@ -69,7 +69,7 @@ jobs:
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/masmovil.db data/status.json
+          git add data/masmovil.db data/status.json data/insights.json
           if git diff --cached --quiet; then
             echo "No data changes"
           else

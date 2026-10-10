@@ -33,3 +33,9 @@ How it fits together:
   workflow pulls app stores + X daily and Facebook/Instagram/TikTok on the 1st and 15th, or on a manual run with "full" ticked.
   On a paid Apify plan you can make socials daily by editing the "Choose sources" step.
 - X in the cloud comes from Apify only (`apidojo/tweet-scraper`). The one-off X import used locally isn't committed.
+
+## Insights step
+`refresh.py` now runs `mms.insights` after analysis; only new items are classified/embedded (cached by item id +
+text hash). The workflow commits `data/insights.json` alongside the DB. The HF cache key was bumped
+(`...-minilm-v2`) so the MiniLM embedding model is cached too. Apify schedule and caps are unchanged.
+The deployed app only reads the precomputed files (no models are loaded on Streamlit Cloud).

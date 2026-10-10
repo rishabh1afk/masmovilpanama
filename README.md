@@ -1,4 +1,4 @@
-# Más Móvil Panamá — Brand Sentiment Dashboard
+# Más Móvil Panamá — User Feedback → Product Roadmap
 
 A live brand-sentiment dashboard for Más Móvil (Cable & Wireless Panamá). It pulls customer voice from the app stores,
 social media and X, scores sentiment in Spanish and English, tags themes, pulls out what users are asking for, and
@@ -15,22 +15,28 @@ MMS_ALLOW_REFRESH=1 .venv/bin/streamlit run streamlit_app.py --server.port 8501 
 .venv/bin/python screenshot.py                         # → dashboard.png (headless Chrome via Playwright)
 ```
 Socials need `APIFY_TOKEN` in the environment. It is read at runtime only, sent in the Authorization header,
-and never logged or written to disk.
+and never logged or written to d## Layout
+Read-only Streamlit app (all analysis is precomputed into `data/insights.json` + `item_insight` table):
+1. Header with coverage (window, items, channels)
+2. **Top user problems** — sub-issue cards with real counts, % and a verbatim quote
+3. **What users want** — explicit requests, ranked
+4. **Product improvement opportunities** — complaint | need | product change | mentions (n, %) | channels | priority | evidence
+5. Category deep-dives (6 app categories) + secondary **Non-app / service issues** (network, pricing, support)
+6. **Supporting reviews** — searchable, filter by category / channel / date (sentiment secondary)
 
-## Layout
-| Path | What |
-|---|---|
-| `mms/config.py` | App IDs, handles, caps, Apify actor IDs |
-| `mms/collect.py` | One collector per source → `data/raw/<source>.json` (status, reason, cost, normalized items) |
-| `mms/apify.py` | Small Apify REST client (start run, poll, read cost, fetch dataset) |
-| `mms/taxonomy.py` | Theme and ask rules (Panamanian Spanish + English) |
-| `mms/analyze.py` | Sentiment + translation + themes/asks → SQLite `data/masmovil.db` (NLP cached by text hash) |
-| `mms/metrics.py` | Metrics and Plotly figures shared by the app and the snapshot |
-| `streamlit_app.py` | Streamlit dashboard (Streamlit Cloud entry; read-only, no ML at runtime). `app.py` is a thin local wrapper |
-| `requirements.txt` / `requirements-refresh.txt` | Cloud runtime deps (streamlit, pandas, plotly) / refresh + analysis deps |
-| `.github/workflows/refresh.yml` | Daily 06:00 IST refresh on GitHub Actions; commits `data/masmovil.db` |
-| `DEPLOY.md` | Streamlit Community Cloud deployment steps |
-| `build_snapshot.py`, `screenshot.py` | Static HTML export and PNG screenshot |
+Real feedback (counts, quotes, links) is kept separate from interpretation: "What users need" and
+"Potential product change" come from `recommendations.json` and are labelled **Recommendation (AI-generated)**.
+
+## Insight method (`python -m mms.insights`)
+- Keyword/regex rules per sub-issue (`mms/product.py`, Spanish + English, accent-insensitive), severity 1–3.
+- Multilingual embeddings (`paraphrase-multilingual-MiniLM-L12-v2`, local CPU) assign uncaught negative app
+  complaints to the nearest sub-issue centroid (cosine ≥ 0.62, margin ≥ 0.03).
+- Praise without request language is not counted; overlapping sub-issues are de-duplicated.
+- Priority = frequency × severity (High / Medium / Low).
+- Classifications are cached per item id + text hash (+ rules version) and embeddings per text hash,
+  so re-runs only process new items. `refresh.py` runs collect → analyze → insights.
+
+ot |
 
 ## Sources
 | Source | How | Caps | Cost |

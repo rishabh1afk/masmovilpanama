@@ -1,214 +1,122 @@
-"""Más Móvil Panamá — Brand Sentiment Dashboard (Streamlit).  streamlit run streamlit_app.py
+"""Más Móvil Panamá: user feedback → product roadmap (Streamlit).  streamlit run streamlit_app.py
 
-Read-only at runtime: it only reads the precomputed data/masmovil.db + data/status.json
-(produced by refresh.py locally or by the GitHub Actions workflow). No ML models are loaded here."""
-import os, sys, subprocess, html, datetime as dt
+Read-only at runtime: reads precomputed data/insights.json and data/masmovil.db (items + item_insight).
+No ML models are loaded here; extraction runs in `python -m mms.insights` (locally or in GitHub Actions)."""
+import json, os, sqlite3, datetime as dt
 import pandas as pd
+import plotly.graph_objects as go
 import streamlit as st
 from mms import config as C
-from mms import metrics as M
+from mms import product as P
+from mms import render as R
 
-st.set_page_config(page_title="Más Móvil · Brand Sentiment", page_icon="📶", layout="wide")
-st.markdown("""<style>
-.block-container{padding-top:3rem;max-width:1500px}
-.kpi{background:#111a2e;border:1px solid #1f2a44;border-radius:12px;padding:14px 16px}
-.kpi .l{color:#94a3b8;font-size:12px;text-transform:uppercase;letter-spacing:.06em}
-.kpi .v{font-size:30px;font-weight:700;color:#f8fafc;line-height:1.2}
-.kpi .s{color:#94a3b8;font-size:12px}
-.src{background:#111a2e;border:1px solid #1f2a44;border-radius:10px;padding:10px 12px;font-size:12.5px;height:100%}
-.ok{color:#22c55e}.partial,.stale{color:#f59e0b}.failed{color:#ef4444}.not_connected{color:#94a3b8}
-.alert{border-left:4px solid #ef4444;background:#1a1420;padding:8px 12px;margin:6px 0;border-radius:6px}
-.alert.medium{border-color:#f59e0b}
-.quote{border-left:3px solid #38bdf8;padding:4px 10px;margin:6px 0;color:#cbd5e1;font-size:13px}
-.quote .en{color:#94a3b8;font-style:italic}
-h1,h2,h3{color:#f8fafc}
+st.set_page_config(page_title="Más Móvil · Feedback → Roadmap", page_icon="📶", layout="wide")
+st.markdown(f"""<style>{R.CSS}
+.block-container{{padding-top:2.2rem;max-width:1280px}}
+[data-testid="stAppViewContainer"],[data-testid="stHeader"],[data-testid="stSidebar"]{{background:#fff}}
+[data-testid="stExpander"] details{{border:1px solid #e5e7eb;border-radius:10px}}
 </style>""", unsafe_allow_html=True)
+
+INS = C.DATA / "insights.json"
 
 
 @st.cache_data(show_spinner=False)
-def get_data(mtime):
-    return M.load(), M.load_status()
+def load(mtime):
+    ins = json.loads(INS.read_text())
+    con = sqlite3.connect(C.DB_PATH)
+    df = pd.read_sql("""SELECT i.id, i.channel, i.date, i.text, i.text_en, i.rating, i.sentiment, i.url,
+                               ii.app_related, ii.subissues, ii.categories, ii.nonapp, ii.method
+                        FROM items i JOIN item_insight ii ON i.id = ii.id""", con)
+    con.close()
+    try:
+        status = json.loads(C.STATUS_PATH.read_text())
+    except Exception:
+        status = {}
+    return ins, df, status
 
 
-def _db_ready():
-    if not C.DB_PATH.exists():
+def ready():
+    if not (INS.exists() and C.DB_PATH.exists()):
         return False
-    import sqlite3
     try:
         con = sqlite3.connect(C.DB_PATH)
-        ok = con.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='items'").fetchone() is not None and con.execute("SELECT COUNT(*) FROM items").fetchone()[0] > 0
+        ok = con.execute("SELECT count(*) FROM sqlite_master WHERE name='item_insight'").fetchone()[0] == 1
         con.close()
         return ok
     except Exception:
         return False
 
 
-if not _db_ready():
-    st.markdown("## 📶 Más Móvil Panamá — Brand Sentiment")
-    st.info("⏳ Data is loading — first refresh pending. The GitHub Actions workflow *Refresh sentiment data* builds "
-            "`data/masmovil.db`; this page will show the dashboard automatically once it has run.")
+if not ready():
+    st.markdown("### Más Móvil Panamá: user feedback → product roadmap")
+    st.info("⏳ Data is loading, first refresh pending. The GitHub Actions workflow *Refresh sentiment data* builds the data; "
+            "this page shows the roadmap once it has run.")
     st.stop()
-df_all, status = get_data(C.DB_PATH.stat().st_mtime)
 
-# ---------------- Header ----------------
-h1, h2 = st.columns([5, 1.3])
-with h1:
-    st.markdown("## 📶 Más Móvil Panamá — Brand Sentiment")
-    last = max((s.get("fetched_at") or "" for s in status.values()), default="")
-    if last:
-        t = pd.Timestamp(last).tz_convert("Asia/Kolkata").strftime("%d %b %Y, %I:%M %p IST")
-        st.caption(f"Data last refreshed {t} · Sources: app stores, social & X · Sentiment: multilingual XLM-RoBERTa · Themes/asks: Panamanian-Spanish rules")
-# The in-app refresh needs Apify + the ML models, so it is only offered locally (never on Streamlit Cloud).
-ALLOW_REFRESH = os.environ.get("MMS_ALLOW_REFRESH", "0") == "1"
-with h2:
-    if not ALLOW_REFRESH:
-        st.caption("🔄 Data refreshes daily at 06:00 IST (automated)")
-    elif st.button("🔄 Refresh data", width="stretch", help="Re-pulls every source (spends Apify credits for socials) and re-runs analysis"):
-        with st.spinner("Pulling sources and re-analysing… this can take several minutes"):
-            r = subprocess.run([sys.executable, "refresh.py"], cwd=str(C.ROOT), capture_output=True, text=True)
-        st.cache_data.clear()
-        st.toast("Refresh finished" if r.returncode == 0 else "Refresh finished with errors — see source status")
-        st.rerun()
+ins, df, status = load(INS.stat().st_mtime + C.DB_PATH.stat().st_mtime)
+last = max((s.get("fetched_at") or "" for s in status.values()), default="")
+refreshed = pd.Timestamp(last).tz_convert("Asia/Kolkata").strftime("%d %b %Y, %I:%M %p IST") if last else None
 
-# ---------------- Filters ----------------
-with st.sidebar:
-    st.markdown("### Filters")
-    chans = [M.CH_LABEL[c] for c in M.CH_ORDER if c in set(df_all.channel)]
-    sel_ch = st.multiselect("Channel", chans, default=chans)
-    dmin = df_all.date.min().date(); dmax = df_all.date.max().date()
-    default_start = max(dmin, dmax - dt.timedelta(days=C.LOOKBACK_DAYS))
-    dr = st.date_input("Date range", (default_start, dmax), min_value=dmin, max_value=dmax)
-    sel_sent = st.multiselect("Sentiment", ["positive", "neutral", "negative"], default=["positive", "neutral", "negative"])
-    themes = sorted({t for ts in df_all.themes for t in ts})
-    sel_th = st.multiselect("Theme", themes, default=[])
-    st.caption("Theme filter keeps items tagged with any selected theme. Brand-owned posts are excluded from sentiment metrics.")
+st.markdown(R.header(ins, refreshed), unsafe_allow_html=True)
+st.markdown(R.problems(ins), unsafe_allow_html=True)
 
-df = df_all[df_all.channel_label.isin(sel_ch)]
+# one small bar: complaints by product category
+cats = [c for c in ins["categories"] if c["category"] != P.NONAPP_CATEGORY]
+fig = go.Figure(go.Bar(x=[c["n"] for c in cats][::-1], y=[c["category"] for c in cats][::-1], orientation="h",
+                       marker_color=R.ACC, text=[c["n"] for c in cats][::-1], textposition="outside"))
+fig.update_layout(height=210, margin=dict(l=0, r=30, t=26, b=0), paper_bgcolor="white", plot_bgcolor="white",
+                  title=dict(text="App complaints by product category (an item can sit in more than one)", font=dict(size=13, color="#374151"), x=0),
+                  xaxis=dict(visible=False), yaxis=dict(tickfont=dict(size=12, color="#111827")), font=dict(color="#111827"))
+st.markdown("<div style='height:14px'></div>", unsafe_allow_html=True)
+st.plotly_chart(fig, width="stretch", config={"displayModeBar": False}, key="catbar")
+
+st.markdown(R.wants(ins), unsafe_allow_html=True)
+st.markdown(R.opportunities(ins), unsafe_allow_html=True)
+
+st.markdown("<div class='mm'><h2>Category deep-dives</h2><div class='sub'>Clustered sub-issues with verbatim quotes "
+            "(Spanish + machine translation) and AI-generated recommendations.</div></div>", unsafe_allow_html=True)
+for c in cats:
+    with st.expander(f"{c['category']}: {c['n']} items · {c['pct']}% of app feedback", expanded=False):
+        st.markdown(R.category(ins, c["category"]), unsafe_allow_html=True)
+
+na = next(c for c in ins["categories"] if c["category"] == P.NONAPP_CATEGORY)
+st.markdown(f"<div class='mm'><h2>Non-app / service issues</h2><div class='sub'>Secondary: network, pricing and customer service. "
+            f"{na['n']} items ({na['pct']}% of all feedback), mostly from social and X. Not app changes, but worth routing to the owning teams.</div></div>",
+            unsafe_allow_html=True)
+with st.expander("Show non-app issues", expanded=False):
+    st.markdown(R.category(ins, P.NONAPP_CATEGORY), unsafe_allow_html=True)
+
+# ---------------- Supporting reviews ----------------
+st.markdown("<div class='mm'><h2>Supporting reviews</h2><div class='sub'>Every classified item, searchable.</div></div>", unsafe_allow_html=True)
+LAB = {s["id"]: s["label"] for s in ins["subissues"]}
+CHL = {"google_play": "Google Play", "app_store": "App Store", "facebook": "Facebook", "instagram": "Instagram", "tiktok": "TikTok", "x": "X"}
+d = df.copy()
+d["date"] = pd.to_datetime(d["date"], utc=True).dt.tz_convert(None)
+d["Channel"] = d.channel.map(CHL)
+d["cats"] = d.categories.apply(json.loads) + d.nonapp.apply(lambda x: [P.NONAPP_CATEGORY] if json.loads(x) else [])
+d["Issue"] = (d.subissues.apply(json.loads) + d.nonapp.apply(json.loads)).apply(lambda L: "; ".join(LAB.get(x, x) for x in L))
+d = d[d.cats.str.len() > 0]
+f1, f2, f3, f4 = st.columns([2, 2, 2, 1.4])
+cat_sel = f1.multiselect("Category", P.APP_CATEGORIES + [P.NONAPP_CATEGORY], placeholder="All categories")
+ch_sel = f2.multiselect("Channel", sorted(d.Channel.unique()), placeholder="All channels")
+dr = f3.date_input("Date range", (d.date.min().date(), d.date.max().date()))
+sent_sel = f4.multiselect("Sentiment", ["negative", "neutral", "positive"], placeholder="All")
+q = st.text_input("Search text", placeholder="e.g. tarjeta, día extra, código, Yappy")
+if cat_sel:
+    d = d[d.cats.apply(lambda L: any(c in L for c in cat_sel))]
+if ch_sel:
+    d = d[d.Channel.isin(ch_sel)]
 if isinstance(dr, (list, tuple)) and len(dr) == 2:
-    df = df[(df.date.dt.date >= dr[0]) & (df.date.dt.date <= dr[1])]
-df = df[df.sentiment.isin(sel_sent) | df.sentiment.isna()]
-if sel_th:
-    df = df[df.themes.apply(lambda ts: any(t in ts for t in sel_th))]
+    d = d[(d.date.dt.date >= dr[0]) & (d.date.dt.date <= dr[1])]
+if sent_sel:
+    d = d[d.sentiment.isin(sent_sel)]
+if q:
+    d = d[d.text.str.contains(q, case=False, na=False) | d.text_en.fillna("").str.contains(q, case=False)]
+st.caption(f"{len(d):,} items")
+st.dataframe(d.sort_values("date", ascending=False)[["date", "Channel", "rating", "Issue", "text", "text_en", "sentiment", "url"]]
+             .rename(columns={"date": "Date", "rating": "★", "text": "Quote (original)", "text_en": "English (MT)", "sentiment": "Sentiment", "url": "Link"}),
+             width="stretch", hide_index=True, height=480,
+             column_config={"Link": st.column_config.LinkColumn("Link", display_text="open"),
+                            "Date": st.column_config.DatetimeColumn(format="DD MMM YYYY")})
 
-# ---------------- Source status ----------------
-cols = st.columns(len(M.CH_ORDER))
-for c, ch in zip(cols, M.CH_ORDER):
-    s = status.get(ch, {"status": "not run"})
-    rng = ""
-    if s.get("date_min"):
-        rng = f"{pd.Timestamp(s['date_min']).strftime('%d %b %y')} → {pd.Timestamp(s['date_max']).strftime('%d %b %y')}"
-    icon = {"ok": "●", "partial": "◐", "stale": "◐", "pending": "○", "failed": "✕", "not_connected": "○"}.get(s["status"], "○")
-    c.markdown(f"<div class='src'><b>{M.CH_LABEL[ch]}</b><br><span class='{s['status']}'>{icon} {s['status'].replace('_', ' ')}</span>"
-               f" · {s.get('count', 0)} items<br><span style='color:#94a3b8'>{rng}</span>"
-               f"<br><span style='color:#94a3b8;font-size:11px'>{html.escape((s.get('reason') or '')[:140])}</span></div>",
-               unsafe_allow_html=True)
-
-# ---------------- KPIs ----------------
-k = M.kpis(df)
-st.write("")
-kc = st.columns(6)
-def kpi(col, label, val, sub=""):
-    col.markdown(f"<div class='kpi'><div class='l'>{label}</div><div class='v'>{val}</div><div class='s'>{sub}</div></div>", unsafe_allow_html=True)
-fmt = lambda x, suf="": "—" if x is None else f"{x:+.1f}{suf}" if suf in ("", " pts") else f"{x}{suf}"
-kpi(kc[0], "Brand sentiment score", fmt(k["score"]), "mean(P(pos) − P(neg)) × 100, range −100…+100")
-kpi(kc[1], "Net sentiment", fmt(k["net"], " pts"), "% positive − % negative")
-kpi(kc[2], "Customer voice volume", f"{k['n']:,}", "reviews, comments & mentions")
-kpi(kc[3], "Positive", "—" if k["pos"] is None else f"{k['pos']}%", "share of volume")
-kpi(kc[4], "Negative", "—" if k["neg"] is None else f"{k['neg']}%", "share of volume")
-kpi(kc[5], "Avg store rating", "—" if k["rating"] is None else f"{k['rating']}★", "Google Play + App Store")
-
-tabs = st.tabs(["Overview", "Channels", "Themes", "What users ask for", "App stores", "Alerts", "Raw feed", "Sources & method"])
-
-with tabs[0]:
-    st.plotly_chart(M.fig_trend(df), width="stretch", key="chart1")
-    a, b = st.columns(2)
-    a.plotly_chart(M.fig_channel_split(df), width="stretch", key="chart2")
-    b.plotly_chart(M.fig_theme_net(df), width="stretch", key="chart3")
-    al = M.alerts(df)
-    if al:
-        st.markdown("#### 🚨 Alerts")
-        for x in al[:6]:
-            st.markdown(f"<div class='alert {x['level']}'><b>{x['scope']}</b> — {x['message']}</div>", unsafe_allow_html=True)
-
-with tabs[1]:
-    st.dataframe(M.channel_table(df, status), width="stretch", hide_index=True)
-    st.plotly_chart(M.fig_channel_split(df), width="stretch", key="chart4")
-    a, b = st.columns(2)
-    show = ["date", "channel_label", "kind", "author", "text", "likes", "comments", "shares", "sentiment", "url"]
-    with a:
-        st.markdown("##### Top items by engagement")
-        st.dataframe(M.top_items(df, "engagement")[show], width="stretch", hide_index=True,
-                     column_config={"url": st.column_config.LinkColumn("link", display_text="open")})
-    with b:
-        st.markdown("##### Most negative items")
-        st.dataframe(M.top_items(df, negative=True)[show], width="stretch", hide_index=True,
-                     column_config={"url": st.column_config.LinkColumn("link", display_text="open")})
-
-with tabs[2]:
-    a, b = st.columns(2)
-    a.plotly_chart(M.fig_theme_heatmap(df), width="stretch", key="chart5")
-    b.plotly_chart(M.fig_theme_net(df), width="stretch", key="chart6")
-    st.plotly_chart(M.fig_theme_trend(df), width="stretch", key="chart7")
-    t = M.theme_stats(df)
-    if not t.empty:
-        st.dataframe(t.round(1), width="stretch", hide_index=True)
-
-with tabs[3]:
-    at = M.asks_table(df, n_quotes=3)
-    if at.empty:
-        st.info("No asks in the current filter.")
-    for i, r in at.iterrows():
-        with st.expander(f"#{i + 1}  {r.ask} — {r['count']} mentions · {r.negative_pct}% negative · {r.channels}", expanded=i < 3):
-            for q in r.quotes:
-                st.markdown(f"<div class='quote'>“{html.escape(q['es'])}”<br><span class='en'>EN: {html.escape(q['en'] or '—')}</span>"
-                            f"<br><span style='font-size:11px;color:#64748b'>{q['channel']} · {q['date']} · <a href='{q['url']}' target='_blank'>source</a></span></div>",
-                            unsafe_allow_html=True)
-
-with tabs[4]:
-    a, b = st.columns(2)
-    a.plotly_chart(M.fig_rating_dist(df), width="stretch", key="chart8")
-    b.plotly_chart(M.fig_version(df), width="stretch", key="chart9")
-    a, b = st.columns([1, 2])
-    with a:
-        st.markdown("##### 1★ review themes (last 30 days of data)")
-        st.dataframe(M.one_star_themes(df), width="stretch", hide_index=True)
-    with b:
-        st.markdown("##### Latest 1★ reviews")
-        ones = df[df.rating == 1].sort_values("date", ascending=False).head(15)
-        st.dataframe(ones[["date", "channel_label", "app_version", "theme", "text", "text_en", "url"]], width="stretch",
-                     hide_index=True, column_config={"url": st.column_config.LinkColumn("link", display_text="open")})
-    st.dataframe(M.version_table(df), width="stretch", hide_index=True)
-
-with tabs[5]:
-    al = M.alerts(df)
-    if not al:
-        st.success("No week-over-week spikes detected in the current filter.")
-    for x in al:
-        st.markdown(f"<div class='alert {x['level']}'><b>[{x['level'].upper()}] {x['scope']}</b> — {x['message']}</div>", unsafe_allow_html=True)
-    st.caption("Rule: negatives in the latest week ≥5 and ≥1.5× the prior 4-week average, or net sentiment down >15 pts (≥10 items). The current, incomplete week is also checked.")
-
-with tabs[6]:
-    q = st.text_input("Search text (Spanish or English)")
-    f = df.copy()
-    if q:
-        f = f[f.text.str.contains(q, case=False, na=False) | f.text_en.fillna("").str.contains(q, case=False)]
-    f = f.sort_values("date", ascending=False)
-    st.caption(f"{len(f):,} items")
-    st.dataframe(f[["date", "channel_label", "kind", "author", "rating", "sentiment", "score", "theme", "text", "text_en", "url"]],
-                 width="stretch", hide_index=True, height=600,
-                 column_config={"url": st.column_config.LinkColumn("link", display_text="open"),
-                                "score": st.column_config.NumberColumn(format="%.2f")})
-
-with tabs[7]:
-    st.markdown("#### Source status")
-    st.dataframe(pd.DataFrame([{"Source": M.CH_LABEL.get(k_, k_), "Status": v.get("status"), "Items": v.get("count"),
-                                "From": v.get("date_min"), "To": v.get("date_max"), "Apify cost (USD)": v.get("cost_usd"),
-                                "Method": v.get("note"), "Reason / note": v.get("reason")} for k_, v in status.items()]),
-                 width="stretch", hide_index=True)
-    st.markdown("""
-**Method**
-- *Sentiment*: `cardiffnlp/twitter-xlm-roberta-base-sentiment` (multilingual, trained on tweets incl. Spanish). Score = P(positive) − P(negative). For store reviews where the text model says *neutral*, the star rating decides (≤2★ negative, ≥4★ positive).
-- *Themes & asks*: keyword rules tuned for Panamanian Spanish (e.g. *recarga, yappy, señal, opciones de desarrollador*). An item can have several themes; the first match is its primary theme. An *ask* is counted when a pain-point pattern matches **and** the item is negative, ≤2★, or contains request language (*arreglen, deberían, por favor…*).
-- *Translation*: `Helsinki-NLP/opus-mt-es-en` (machine translation, may be imperfect).
-- Brand-owned posts are used for engagement only and excluded from sentiment.
-""")
+st.markdown(R.method(ins), unsafe_allow_html=True)

@@ -26,3 +26,5 @@ dashboard_snapshot.html
 agent-tools/
 
 # Committed on purpose: data/masmovil.db (precomputed results + NLP cache) and data/status.json
+
+dashboard_opportunities.png
