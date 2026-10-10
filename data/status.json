@@ -12,14 +12,14 @@
   },
   "facebook": {
     "source": "facebook",
-    "status": "failed",
-    "reason": "Apify rejected the token (HTTP 401 user-or-token-not-found)",
-    "note": "",
-    "fetched_at": "2026-10-10T18:00:22.928209+00:00",
-    "count": 0,
-    "cost_usd": 0.0,
-    "date_min": null,
-    "date_max": null
+    "status": "ok",
+    "reason": "",
+    "note": "apify~facebook-posts-scraper + apify~facebook-comments-scraper",
+    "fetched_at": "2026-10-10T18:15:50.001038+00:00",
+    "count": 92,
+    "cost_usd": 0.4045,
+    "date_min": "2026-08-06T02:16:38+00:00",
+    "date_max": "2026-10-10T17:42:07+00:00"
   },
   "google_play": {
     "source": "google_play",
@@ -34,14 +34,14 @@
   },
   "instagram": {
     "source": "instagram",
-    "status": "failed",
-    "reason": "Apify rejected the token (HTTP 401 user-or-token-not-found)",
-    "note": "",
-    "fetched_at": "2026-10-10T18:00:24.730754+00:00",
-    "count": 0,
-    "cost_usd": 0.0,
-    "date_min": null,
-    "date_max": null
+    "status": "ok",
+    "reason": "",
+    "note": "apify~instagram-scraper + apify~instagram-comment-scraper",
+    "fetched_at": "2026-10-10T18:17:21.252610+00:00",
+    "count": 410,
+    "cost_usd": 1.0378,
+    "date_min": "2026-08-12T22:30:08+00:00",
+    "date_max": "2026-10-10T18:16:15+00:00"
   },
   "linkedin": {
     "source": "linkedin",
@@ -56,23 +56,23 @@
   },
   "tiktok": {
     "source": "tiktok",
-    "status": "failed",
-    "reason": "Apify rejected the token (HTTP 401 user-or-token-not-found)",
-    "note": "",
-    "fetched_at": "2026-10-10T18:00:26.502455+00:00",
-    "count": 0,
-    "cost_usd": 0.0,
-    "date_min": null,
-    "date_max": null
+    "status": "ok",
+    "reason": "",
+    "note": "clockworks~tiktok-scraper + clockworks~tiktok-comments-scraper (relevance/90-day filter applied: 298→56)",
+    "fetched_at": "2026-10-10T18:19:59.917636+00:00",
+    "count": 56,
+    "cost_usd": 0.5268,
+    "date_min": "2026-07-18T21:53:48+00:00",
+    "date_max": "2026-10-10T06:35:18+00:00"
   },
   "x": {
     "source": "x",
-    "status": "partial",
-    "reason": "Apify unavailable (Apify rejected the token (HTTP 401 user-or-token-not-found)); using snapshot imported via X API (max 25 newest posts per week)",
-    "note": "X API v2 full-archive search via Grok Bot X connector (one-time import, max 25 newest per weekly window)",
-    "fetched_at": "2026-10-10T18:00:27.920371+00:00",
+    "status": "ok",
+    "reason": "",
+    "note": "apidojo~tweet-scraper (Apify FREE plan returns max ~10 tweets/run); accumulated with 338 earlier X items (90-day window)",
+    "fetched_at": "2026-10-10T18:14:21.827798+00:00",
     "count": 348,
-    "cost_usd": 0.0,
+    "cost_usd": 0.004,
     "date_min": "2026-07-24T14:45:08+00:00",
     "date_max": "2026-10-10T17:26:18+00:00"
   }

@@ -37,10 +37,10 @@ and never logged or written to disk.
 |---|---|---|---|
 | Google Play `com.cwp.app` (Mi Más / Más) | `google-play-scraper` (public endpoint, gl=PA hl=es) | Newest reviews back to 90 days (hard cap 1,500) | free |
 | App Store `id1391146262` (PA storefront) | Apple public customer-reviews RSS | 300 most recent | free |
-| Facebook `facebook.com/masmovilpanama` | `apify/facebook-posts-scraper` + `apify/facebook-comments-scraper` | 30 posts in 90 days × 50 comments | Apify credits |
-| Instagram `@masmovilpanama` | `apify/instagram-scraper` + `apify/instagram-comment-scraper` | 30 posts × 50 comments | Apify credits |
-| TikTok `@masmovilpanama` + `#masmovilpanama`, `#masmovil` | `clockworks/tiktok-scraper` + `clockworks/tiktok-comments-scraper` | 30 per profile/hashtag; 50 comments per video | Apify credits |
-| X / Twitter | `apidojo/tweet-scraper` with searches for @MasMovilPanama, @masmovilayuda, "más móvil" panamá, #MasMovilPanama | 300 items | Apify credits |
+| Facebook `facebook.com/masmovilpanama` | `apify/facebook-posts-scraper` + `apify/facebook-comments-scraper` | 30 posts in 90 days × 15 comments | Apify credits |
+| Instagram `@masmovilpanama` | `apify/instagram-scraper` + `apify/instagram-comment-scraper` | 30 posts × 15 comments | Apify credits |
+| TikTok `@masmovilpanama` + `#masmovilpanama` | `clockworks/tiktok-scraper` + `clockworks/tiktok-comments-scraper` | 30 per profile/hashtag; 15 comments per video; Panama-relevance + 90-day filter | Apify credits |
+| X / Twitter | `apidojo/tweet-scraper` with searches for @MasMovilPanama, @masmovilayuda, "más móvil" panamá, #MasMovilPanama | 300 items requested (FREE plan returns ~10/run, so X history accumulates across runs) | Apify credits |
 | LinkedIn | Not connected. There's no cheap, reliable company-posts actor (LinkedIn needs a login), and it carries little customer-sentiment value | – | – |
 
 Every Apify run passes `maxItems` so pay-per-result actors can't overspend. The real cost of each run (`usageTotalUsd`)
@@ -68,3 +68,8 @@ token in `APIFY_TOKEN` and press **Refresh data** to connect the social sources.
 - App Store reviews in the 90-day window are few (66), so App Store numbers are less reliable.
 - Rule-based themes and asks miss sarcasm and unusual wording. Read the quotes, not just the counts.
 - The TikTok handle `@masmovilpanama` couldn't be confirmed without a login.
+
+## Actual Apify cost (first full run, 10 Oct 2026, Apify FREE plan, $5/month limit)
+Facebook $0.40 · Instagram $1.04 · TikTok $0.53 · X $0.004, so **≈ $1.97 per full social pull**. Every run also has a hard
+`maxTotalChargeUsd` cap (posts $0.50, comments $1.25, X $0.20). On the FREE plan the GitHub workflow runs daily for app stores + X,
+and pulls Facebook/Instagram/TikTok only on the 1st and 15th (or on a manual run with "full" ticked), which keeps it inside $5/month.

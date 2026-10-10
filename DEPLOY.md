@@ -16,7 +16,7 @@ How it fits together:
 3. **Add the Apify secret:** repo → Settings → *Secrets and variables* → *Actions* → *New repository secret*
    → Name `APIFY_TOKEN`, Value = your Apify API token (Apify Console → Settings → API & Integrations; it starts with `apify_api_`).
 4. **Enable Actions write access:** Settings → Actions → General → *Workflow permissions* → **Read and write permissions** → Save.
-5. **First refresh:** Actions tab → *Refresh sentiment data* → *Run workflow*. The first run downloads about 1.5 GB of models
+5. **First refresh:** Actions tab → *Refresh sentiment data* → *Run workflow* ("full" ticked = also socials, ≈ $2). The first run downloads about 1.5 GB of models
    (roughly 10–15 min); after that, runs are quicker because only new texts get analysed.
 6. **Streamlit Cloud:** go to https://share.streamlit.io → sign in with GitHub (rishabh1afk) → authorise access to private repos
    → *Create app* → *Deploy a public app from GitHub* (the app's visibility is set separately in sharing settings) →
@@ -29,7 +29,7 @@ How it fits together:
 ## Operating
 - Change the schedule by editing `cron` in `.github/workflows/refresh.yml` (it's in UTC).
 - If a source fails in a run, the dashboard keeps showing its last good data with status **stale** and the reason.
-- Apify cost per run is recorded per source (see *Sources & method*). At current caps, expect about US$2–4 per daily run
-  (≈ $60–120/month). Lower `MAX_POSTS_PER_ACCOUNT` / `MAX_COMMENTS_PER_POST` / `MAX_X_ITEMS` in `mms/config.py`
-  or switch the cron to weekly to cut that.
+- Apify cost: a full social pull measured **≈ US$1.97** (10 Oct 2026). The Apify FREE plan caps spend at $5/month, so the
+  workflow pulls app stores + X daily and Facebook/Instagram/TikTok on the 1st and 15th, or on a manual run with "full" ticked.
+  On a paid Apify plan you can make socials daily by editing the "Choose sources" step.
 - X in the cloud comes from Apify only (`apidojo/tweet-scraper`). The one-off X import used locally isn't committed.

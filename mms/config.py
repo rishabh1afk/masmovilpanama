@@ -22,14 +22,14 @@ GOOGLE_PLAY_HARD_CAP = 1500   # free endpoint; ensures the 90-day window is cove
 # ---- Social accounts ----
 FACEBOOK_PAGE = "https://www.facebook.com/masmovilpanama"     # verified page
 INSTAGRAM_PROFILE = "https://www.instagram.com/masmovilpanama/"  # "+Móvil Panamá (@masmovilpanama)"
-TIKTOK_PROFILE = "masmovilpanama"   # handle NOT independently verified (TikTok blocks unauthenticated checks)
-TIKTOK_HASHTAGS = ["masmovilpanama", "masmovil"]
+TIKTOK_PROFILE = "masmovilpanama"   # NOTE: first Apify run (10 Oct 2026) returned no videos for this profile; official handle unconfirmed
+TIKTOK_HASHTAGS = ["masmovilpanama"]   # "#masmovil" was mostly Spain/gaming noise
 X_HANDLE = "MasMovilPanama"         # verified (id 435865158); support handle @masmovilayuda
 X_SEARCH = ['@MasMovilPanama', '@masmovilayuda', '"más móvil" panamá', '#MasMovilPanama']
 LINKEDIN_COMPANY = "https://www.linkedin.com/company/masmovil-panama/"
 
 MAX_POSTS_PER_ACCOUNT = 30
-MAX_COMMENTS_PER_POST = 50
+MAX_COMMENTS_PER_POST = 15   # Apify FREE plan has a $5/month limit; 50/post could cost ~$10 per refresh
 MAX_X_ITEMS = 300
 
 # ---- Apify actors (public Apify Store) ----
@@ -45,3 +45,7 @@ ACTORS = {
     "linkedin_posts": None,
 }
 APIFY_RUN_TIMEOUT_S = 900
+# Hard USD cap per actor run (passed as maxTotalChargeUsd)
+MAX_CHARGE_POSTS_USD = 0.50
+MAX_CHARGE_COMMENTS_USD = 1.25
+MAX_CHARGE_X_USD = 0.20

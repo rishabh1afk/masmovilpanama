@@ -118,7 +118,7 @@ def collect_facebook():
     cost = 0.0
     posts, c = run_actor(C.ACTORS["facebook_posts"], {"startUrls": [{"url": C.FACEBOOK_PAGE}],
                          "resultsLimit": C.MAX_POSTS_PER_ACCOUNT, "onlyPostsNewerThan": f"{C.LOOKBACK_DAYS} days"},
-                         max_items=C.MAX_POSTS_PER_ACCOUNT)
+                         max_items=C.MAX_POSTS_PER_ACCOUNT, max_charge_usd=C.MAX_CHARGE_POSTS_USD)
     cost += c
     items = []
     for p in posts:
@@ -131,7 +131,7 @@ def collect_facebook():
     if urls:
         com, c = run_actor(C.ACTORS["facebook_comments"], {"startUrls": [{"url": u} for u in urls],
                            "resultsLimit": C.MAX_COMMENTS_PER_POST, "includeNestedComments": False},
-                           max_items=len(urls) * C.MAX_COMMENTS_PER_POST)
+                           max_items=len(urls) * C.MAX_COMMENTS_PER_POST, max_charge_usd=C.MAX_CHARGE_COMMENTS_USD)
         cost += c
         for k in com:
             if not k.get("text"):
@@ -149,7 +149,7 @@ def collect_instagram():
     cost = 0.0
     posts, c = run_actor(C.ACTORS["instagram_posts"], {"directUrls": [C.INSTAGRAM_PROFILE], "resultsType": "posts",
                          "resultsLimit": C.MAX_POSTS_PER_ACCOUNT, "onlyPostsNewerThan": f"{C.LOOKBACK_DAYS} days",
-                         "addParentData": False}, max_items=C.MAX_POSTS_PER_ACCOUNT)
+                         "addParentData": False}, max_items=C.MAX_POSTS_PER_ACCOUNT, max_charge_usd=C.MAX_CHARGE_POSTS_USD)
     cost += c
     items = []
     for p in posts:
@@ -161,7 +161,7 @@ def collect_instagram():
     urls = [p["url"] for p in items]
     if urls:
         com, c = run_actor(C.ACTORS["instagram_comments"], {"directUrls": urls, "resultsLimit": C.MAX_COMMENTS_PER_POST},
-                           max_items=len(urls) * C.MAX_COMMENTS_PER_POST)
+                           max_items=len(urls) * C.MAX_COMMENTS_PER_POST, max_charge_usd=C.MAX_CHARGE_COMMENTS_USD)
         cost += c
         for k in com:
             if not k.get("text"):
@@ -172,6 +172,34 @@ def collect_instagram():
     save("instagram", "ok", items, cost=cost, note=f"{C.ACTORS['instagram_posts']} + {C.ACTORS['instagram_comments']}")
 
 
+# TikTok hashtag search is noisy (Spain's MásMóvil, "móvil" gaming, ATH Móvil...). Keep only Panama-relevant,
+# in-window videos, and only comments on those videos.
+import re as _re
+from .taxonomy import norm as _norm
+_TT_REL = _re.compile(r"panama|\bpty\b|\b507\b|\+ ?movil|masmovilpanama|mas ?movil")
+_TT_NOISE = _re.compile(r"€|espana|masmovil_es|movistar|ath ?movil|free ?fire|roblox|yarts|mobilador|movilador")
+
+
+def filter_tiktok(items):
+    cut = CUTOFF().isoformat()
+    vids = {i["url"] for i in items if i["kind"] != "comment"
+            and (i["date"] or "") >= cut
+            and (i["kind"] == "owned_post" or (_TT_REL.search(_norm(i["text"]) + " " + _norm(i.get("author")))
+                                               and not _TT_NOISE.search(_norm(i["text"]) + " " + _norm(i.get("author")))))}
+    seen, out = set(), []
+    for i in items:
+        key = i["id"]
+        if key in seen:
+            continue
+        seen.add(key)
+        if i["kind"] == "comment":
+            if i.get("parent_url") in vids and (i["date"] or "") >= cut:
+                out.append(i)
+        elif i["url"] in vids:
+            out.append(i)
+    return out
+
+
 def collect_tiktok():
     if not _apify_guard("tiktok"):
         return
@@ -179,7 +207,7 @@ def collect_tiktok():
     posts, c = run_actor(C.ACTORS["tiktok_posts"], {"profiles": [C.TIKTOK_PROFILE], "hashtags": C.TIKTOK_HASHTAGS,
                          "resultsPerPage": C.MAX_POSTS_PER_ACCOUNT, "oldestPostDateUnified": f"{C.LOOKBACK_DAYS} days",
                          "shouldDownloadVideos": False, "shouldDownloadCovers": False},
-                         max_items=C.MAX_POSTS_PER_ACCOUNT * (1 + len(C.TIKTOK_HASHTAGS)))
+                         max_items=C.MAX_POSTS_PER_ACCOUNT * (1 + len(C.TIKTOK_HASHTAGS)), max_charge_usd=C.MAX_CHARGE_POSTS_USD)
     cost += c
     items = []
     for p in posts:
@@ -190,10 +218,11 @@ def collect_tiktok():
         items.append(item("tiktok", kind, p.get("id"), p.get("createTimeISO") or p.get("createTime"), p.get("text"),
                           author=author, likes=p.get("diggCount"), comments=p.get("commentCount"),
                           shares=p.get("shareCount"), views=p.get("playCount"), url=p.get("webVideoUrl")))
+    items = filter_tiktok(items)
     urls = [p["url"] for p in items if (p.get("comments") or 0) > 0][: C.MAX_POSTS_PER_ACCOUNT]
     if urls:
         com, c = run_actor(C.ACTORS["tiktok_comments"], {"postURLs": urls, "commentsPerPost": C.MAX_COMMENTS_PER_POST},
-                           max_items=len(urls) * C.MAX_COMMENTS_PER_POST)
+                           max_items=len(urls) * C.MAX_COMMENTS_PER_POST, max_charge_usd=C.MAX_CHARGE_COMMENTS_USD)
         cost += c
         for k in com:
             if not k.get("text"):
@@ -201,6 +230,7 @@ def collect_tiktok():
             items.append(item("tiktok", "comment", k.get("cid"), k.get("createTimeISO") or k.get("createTime"), k.get("text"),
                               author=k.get("uniqueId"), likes=k.get("diggCount"),
                               url=k.get("videoWebUrl"), parent_url=k.get("videoWebUrl")))
+    items = filter_tiktok(items)
     save("tiktok", "ok", items, cost=cost, note=f"{C.ACTORS['tiktok_posts']} + {C.ACTORS['tiktok_comments']}")
 
 
@@ -225,7 +255,7 @@ def collect_x():
         return save("x", "failed", reason=msg)
     since = (NOW() - dt.timedelta(days=C.LOOKBACK_DAYS)).strftime("%Y-%m-%d")
     res, cost = run_actor(C.ACTORS["x_search"], {"searchTerms": [f"{q} since:{since} -filter:retweets" for q in C.X_SEARCH],
-                          "maxItems": C.MAX_X_ITEMS, "sort": "Latest"}, max_items=C.MAX_X_ITEMS)
+                          "maxItems": C.MAX_X_ITEMS, "sort": "Latest"}, max_items=C.MAX_X_ITEMS, max_charge_usd=C.MAX_CHARGE_X_USD)
     items = []
     for t in res:
         if not t.get("id") or t.get("type") == "mock_tweet":

@@ -78,6 +78,15 @@ def main():
         j = json.loads(f.read_text())
         status[j["source"]] = {k: v for k, v in j.items() if k != "items"}
         items.extend(j["items"])
+    # Sources not pulled in this run (e.g. socials on non-social days in GitHub Actions, where raw caches
+    # aren't persisted) keep their previous status; their rows are carried over below.
+    try:
+        prev_status = json.loads(C.STATUS_PATH.read_text())
+    except Exception:
+        prev_status = {}
+    carried = [s for s in prev_status if s not in status]
+    for s in carried:
+        status[s] = prev_status[s]
     C.STATUS_PATH.write_text(json.dumps(status, indent=2, ensure_ascii=False))
     texts = [i["text"] for i in items if i["text"] and i["kind"] != "owned_post"]
     run_nlp(con, texts)
@@ -124,6 +133,24 @@ def main():
                     st["date_min"], st["date_max"] = (ds[0], ds[-1]) if ds else (None, None)
         if kept:
             C.STATUS_PATH.write_text(json.dumps(status, indent=2, ensure_ascii=False))
+    # X: Apify's FREE plan returns only ~10 tweets per run, so accumulate X history across refreshes
+    # (dedupe by id, keep the last LOOKBACK_DAYS days).
+    if has_items and "x" in fresh:
+        cutoff = (dt.datetime.now(dt.timezone.utc) - dt.timedelta(days=C.LOOKBACK_DAYS)).isoformat()
+        ids = {r[0] for r in rows}
+        old_x = [r for r in con.execute("SELECT * FROM items WHERE channel='x' AND date>=?", (cutoff,)).fetchall() if r[0] not in ids]
+        kept.extend(old_x)
+        if old_x and "x" in status:
+            st = status["x"]
+            allx = [r for r in rows if r[1] == "x"] + old_x
+            ds = sorted(r[3] for r in allx if r[3])
+            st["note"] = (st.get("note") or "") + f"; accumulated with {len(old_x)} earlier X items (90-day window)"
+            st["count"] = len(allx)
+            st["date_min"], st["date_max"] = ds[0], ds[-1]
+            C.STATUS_PATH.write_text(json.dumps(status, indent=2, ensure_ascii=False))
+    if has_items:
+        for s in carried:
+            kept.extend(con.execute("SELECT * FROM items WHERE channel=?", (s,)).fetchall())
     rows.extend(kept)
     con.execute("DROP TABLE IF EXISTS items")
     con.execute("""CREATE TABLE items (id TEXT PRIMARY KEY, channel TEXT, kind TEXT, date TEXT, text TEXT, text_en TEXT,

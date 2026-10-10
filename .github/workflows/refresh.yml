@@ -3,7 +3,12 @@ name: Refresh sentiment data
 on:
   schedule:
     - cron: "30 0 * * *"   # 00:30 UTC = 06:00 IST, daily
-  workflow_dispatch: {}      # manual "Run workflow" button
+  workflow_dispatch:
+    inputs:
+      full:
+        description: "Also pull Facebook / Instagram / TikTok (≈ US$2 of Apify credit)"
+        type: boolean
+        default: true
 
 permissions:
   contents: write            # needed to commit the refreshed data file
@@ -40,10 +45,25 @@ jobs:
           path: .hf
           key: hf-xlmr-sentiment-opus-mt-es-en-v1
 
+      # Budget: the Apify FREE plan allows US$5/month and a full social pull costs ≈ US$2.
+      # So daily runs pull app stores (free) + X (≈ $0.004); Facebook/Instagram/TikTok are pulled
+      # on the 1st and 15th of each month, or on a manual run with "full" ticked.
+      - name: Choose sources
+        id: src
+        run: |
+          DOM=$(date -u +%d)
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "${{ inputs.full }}" = "true" ]; then
+            echo "only=" >> "$GITHUB_OUTPUT"
+          elif [ "$DOM" = "01" ] || [ "$DOM" = "15" ]; then
+            echo "only=" >> "$GITHUB_OUTPUT"
+          else
+            echo "only=google_play,app_store,x,linkedin" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Pull sources and analyse
         env:
-          APIFY_TOKEN: ${{ secrets.APIFY_TOKEN }}   # stored as a repo Actions secret; masked in logs
-        run: python refresh.py
+          APIFY_TOKEN: ${{ secrets.APIFY_TOKEN }}   # repo Actions secret; masked in logs
+        run: python refresh.py --only "${{ steps.src.outputs.only }}"
 
       - name: Commit refreshed data
         run: |
@@ -53,6 +73,6 @@ jobs:
           if git diff --cached --quiet; then
             echo "No data changes"
           else
-            git commit -m "data: daily refresh $(date -u +'%Y-%m-%d %H:%M UTC')"
+            git commit -m "data: refresh $(date -u +'%Y-%m-%d %H:%M UTC')"
             git push
           fi

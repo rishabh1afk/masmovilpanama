@@ -33,12 +33,14 @@ def check_token():
     return False, f"Apify rejected the token (HTTP {r.status_code} {err})".strip()
 
 
-def run_actor(actor_id, run_input, timeout_s=900, max_items=None):
+def run_actor(actor_id, run_input, timeout_s=900, max_items=None, max_charge_usd=None):
     """Start an actor run, wait for it, return (items, cost_usd)."""
     h = _headers()
     params = {}
     if max_items:
         params["maxItems"] = int(max_items)  # caps pay-per-result actors
+    if max_charge_usd:
+        params["maxTotalChargeUsd"] = f"{max_charge_usd:.2f}"  # hard spend cap for pay-per-event actors
     r = requests.post(f"{API}/acts/{actor_id}/runs", headers=h, json=run_input, params=params, timeout=60)
     if r.status_code >= 300:
         raise ApifyError(f"{actor_id}: start failed HTTP {r.status_code}: {r.text[:200]}")
@@ -51,6 +53,8 @@ def run_actor(actor_id, run_input, timeout_s=900, max_items=None):
             raise ApifyError(f"{actor_id}: timed out after {timeout_s}s (aborted)")
         time.sleep(5)
         run = requests.get(f"{API}/actor-runs/{run_id}", headers=h, timeout=30).json()["data"]
+    time.sleep(3)  # usage/charges are finalised a moment after the run ends
+    run = requests.get(f"{API}/actor-runs/{run_id}", headers=h, timeout=30).json()["data"]
     cost = float(run.get("usageTotalUsd") or 0.0)
     if run["status"] != "SUCCEEDED":
         raise ApifyError(f"{actor_id}: run {run['status']} (cost ${cost:.3f})")
