@@ -1,0 +1,28 @@
+# Secrets — never commit
+.env
+.env.*
+*.env
+.streamlit/secrets.toml
+secrets.*
+*token*
+*.pem
+*.key
+
+# Local environments & model caches
+.venv/
+venv/
+.hf/
+__pycache__/
+*.pyc
+
+# Raw source caches (re-pulled each refresh; contain full scraped payloads)
+data/raw/
+data/*.log
+data/*.mark
+
+# Local-only artefacts
+dashboard.png
+dashboard_snapshot.html
+agent-tools/
+
+# Committed on purpose: data/masmovil.db (precomputed results + NLP cache) and data/status.json

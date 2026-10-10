@@ -1,0 +1,79 @@
+{
+  "app_store": {
+    "source": "app_store",
+    "status": "ok",
+    "reason": "",
+    "note": "Apple public RSS customer-reviews feed (PA storefront, most recent; Apple caps it at 500)",
+    "fetched_at": "2026-10-10T18:00:21.687599+00:00",
+    "count": 300,
+    "cost_usd": 0.0,
+    "date_min": "2025-08-14T20:54:59+00:00",
+    "date_max": "2026-10-08T20:15:30+00:00"
+  },
+  "facebook": {
+    "source": "facebook",
+    "status": "failed",
+    "reason": "Apify rejected the token (HTTP 401 user-or-token-not-found)",
+    "note": "",
+    "fetched_at": "2026-10-10T18:00:22.928209+00:00",
+    "count": 0,
+    "cost_usd": 0.0,
+    "date_min": null,
+    "date_max": null
+  },
+  "google_play": {
+    "source": "google_play",
+    "status": "ok",
+    "reason": "",
+    "note": "google-play-scraper (public), newest reviews within 90 days, gl=PA hl=es",
+    "fetched_at": "2026-10-10T18:00:37.057673+00:00",
+    "count": 897,
+    "cost_usd": 0.0,
+    "date_min": "2026-07-12T18:13:41+00:00",
+    "date_max": "2026-10-09T16:29:54+00:00"
+  },
+  "instagram": {
+    "source": "instagram",
+    "status": "failed",
+    "reason": "Apify rejected the token (HTTP 401 user-or-token-not-found)",
+    "note": "",
+    "fetched_at": "2026-10-10T18:00:24.730754+00:00",
+    "count": 0,
+    "cost_usd": 0.0,
+    "date_min": null,
+    "date_max": null
+  },
+  "linkedin": {
+    "source": "linkedin",
+    "status": "not_connected",
+    "reason": "No low-cost, reliable LinkedIn company-posts actor configured (LinkedIn needs login/cookies); low customer-sentiment value",
+    "note": "",
+    "fetched_at": "2026-10-10T18:00:27.922447+00:00",
+    "count": 0,
+    "cost_usd": 0.0,
+    "date_min": null,
+    "date_max": null
+  },
+  "tiktok": {
+    "source": "tiktok",
+    "status": "failed",
+    "reason": "Apify rejected the token (HTTP 401 user-or-token-not-found)",
+    "note": "",
+    "fetched_at": "2026-10-10T18:00:26.502455+00:00",
+    "count": 0,
+    "cost_usd": 0.0,
+    "date_min": null,
+    "date_max": null
+  },
+  "x": {
+    "source": "x",
+    "status": "partial",
+    "reason": "Apify unavailable (Apify rejected the token (HTTP 401 user-or-token-not-found)); using snapshot imported via X API (max 25 newest posts per week)",
+    "note": "X API v2 full-archive search via Grok Bot X connector (one-time import, max 25 newest per weekly window)",
+    "fetched_at": "2026-10-10T18:00:27.920371+00:00",
+    "count": 348,
+    "cost_usd": 0.0,
+    "date_min": "2026-07-24T14:45:08+00:00",
+    "date_max": "2026-10-10T17:26:18+00:00"
+  }
+}

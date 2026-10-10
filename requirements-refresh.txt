@@ -1,0 +1,9 @@
+# Used by refresh.py (locally or in GitHub Actions). Install torch CPU first:
+#   pip install torch==2.14.1 --index-url https://download.pytorch.org/whl/cpu
+-r requirements.txt
+requests==2.34.2
+google-play-scraper==1.2.7
+langdetect==1.0.9
+transformers==5.19.0
+sentencepiece==0.2.2
+protobuf==7.36.2

@@ -1,0 +1,5 @@
+# Streamlit Community Cloud runtime (~1 GB RAM). The app only reads precomputed results;
+# no torch/transformers here. Refresh/analysis deps live in requirements-refresh.txt.
+streamlit==1.65.0
+pandas==3.0.6
+plotly==7.1.0
