@@ -30,8 +30,24 @@ def get_data(mtime):
     return M.load(), M.load_status()
 
 
-if not C.DB_PATH.exists():
-    st.error("No data yet. Run `python refresh.py` (or the GitHub Actions refresh) first."); st.stop()
+def _db_ready():
+    if not C.DB_PATH.exists():
+        return False
+    import sqlite3
+    try:
+        con = sqlite3.connect(C.DB_PATH)
+        ok = con.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='items'").fetchone() is not None and con.execute("SELECT COUNT(*) FROM items").fetchone()[0] > 0
+        con.close()
+        return ok
+    except Exception:
+        return False
+
+
+if not _db_ready():
+    st.markdown("## 📶 Más Móvil Panamá — Brand Sentiment")
+    st.info("⏳ Data is loading — first refresh pending. The GitHub Actions workflow *Refresh sentiment data* builds "
+            "`data/masmovil.db`; this page will show the dashboard automatically once it has run.")
+    st.stop()
 df_all, status = get_data(C.DB_PATH.stat().st_mtime)
 
 # ---------------- Header ----------------
@@ -81,7 +97,7 @@ for c, ch in zip(cols, M.CH_ORDER):
     rng = ""
     if s.get("date_min"):
         rng = f"{pd.Timestamp(s['date_min']).strftime('%d %b %y')} → {pd.Timestamp(s['date_max']).strftime('%d %b %y')}"
-    icon = {"ok": "●", "partial": "◐", "stale": "◐", "failed": "✕", "not_connected": "○"}.get(s["status"], "○")
+    icon = {"ok": "●", "partial": "◐", "stale": "◐", "pending": "○", "failed": "✕", "not_connected": "○"}.get(s["status"], "○")
     c.markdown(f"<div class='src'><b>{M.CH_LABEL[ch]}</b><br><span class='{s['status']}'>{icon} {s['status'].replace('_', ' ')}</span>"
                f" · {s.get('count', 0)} items<br><span style='color:#94a3b8'>{rng}</span>"
                f"<br><span style='color:#94a3b8;font-size:11px'>{html.escape((s.get('reason') or '')[:140])}</span></div>",

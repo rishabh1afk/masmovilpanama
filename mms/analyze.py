@@ -148,9 +148,15 @@ def main():
             st["count"] = len(allx)
             st["date_min"], st["date_max"] = ds[0], ds[-1]
             C.STATUS_PATH.write_text(json.dumps(status, indent=2, ensure_ascii=False))
-    if has_items:
-        for s in carried:
-            kept.extend(con.execute("SELECT * FROM items WHERE channel=?", (s,)).fetchall())
+    for s in carried:
+        old_rows = con.execute("SELECT * FROM items WHERE channel=?", (s,)).fetchall() if has_items else []
+        kept.extend(old_rows)
+        if not old_rows and status[s].get("status") not in ("not_connected",):
+            status[s] = dict(source=s, status="pending", count=0, cost_usd=0.0, date_min=None, date_max=None,
+                             fetched_at=status[s].get("fetched_at"),
+                             reason="Not pulled yet in this deployment; included in the next full refresh")
+    if carried:
+        C.STATUS_PATH.write_text(json.dumps(status, indent=2, ensure_ascii=False))
     rows.extend(kept)
     con.execute("DROP TABLE IF EXISTS items")
     con.execute("""CREATE TABLE items (id TEXT PRIMARY KEY, channel TEXT, kind TEXT, date TEXT, text TEXT, text_en TEXT,

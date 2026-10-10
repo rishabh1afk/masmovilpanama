@@ -268,7 +268,11 @@ def collect_x():
         items.append(item("x", kind, t["id"], t.get("createdAt"), t.get("text"), author=a, likes=t.get("likeCount"),
                           comments=t.get("replyCount"), shares=(t.get("retweetCount") or 0) + (t.get("quoteCount") or 0),
                           views=t.get("viewCount"), url=t.get("url")))
-    save("x", "ok", items, cost=cost, note=C.ACTORS["x_search"])
+    # Panama-only guard: keep tweets that reference the Panama brand/handles (drops Spain's MásMóvil etc.)
+    pan = _re.compile(r"masmovilpanama|masmovilayuda|panama|\bpty\b|\b507\b|\+ ?movil")
+    before = len(items)
+    items = [i for i in items if pan.search(_norm(i["text"]) + " " + _norm(i.get("author")))]
+    save("x", "ok", items, cost=cost, note=f"{C.ACTORS['x_search']} (Panama filter kept {len(items)}/{before})")
 
 
 def collect_linkedin():
