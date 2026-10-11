@@ -12,7 +12,7 @@ with sync_playwright() as p:
     pg.goto(url, wait_until="domcontentloaded", timeout=120000)
     pg.wait_for_timeout(2500)
     if ":85" in url:
-        pg.wait_for_selector("text=Supporting reviews", timeout=120000)
+        pg.wait_for_selector("text=All comments", timeout=120000)
         pg.wait_for_timeout(3000)
         h = pg.evaluate("() => { const m = document.querySelector('[data-testid=stMain]') || document.querySelector('section.main'); "
                         "const c = m && (m.querySelector('[data-testid=stMainBlockContainer]') || m.firstElementChild); return c ? c.scrollHeight + 120 : 3000 }")

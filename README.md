@@ -18,13 +18,16 @@ MMS_ALLOW_REFRESH=1 .venv/bin/streamlit run streamlit_app.py --server.port 8501 
 ```
 Socials need `APIFY_TOKEN` in the environment. It is read at runtime only, sent in the Authorization header,
 and never logged or written to d## Layout
-Read-only Streamlit app (all analysis is precomputed into `data/insights.json` + `item_insight` table):
-1. Header with coverage (window, items, channels)
-2. **Top user problems** — sub-issue cards with real counts, % and a verbatim quote
-3. **What users want** — explicit requests, ranked
-4. **Product improvement opportunities** — complaint | need | product change | mentions (n, %) | channels | priority | evidence
-5. Category deep-dives (6 app categories) + secondary **Non-app / service issues** (network, pricing, support)
-6. **Supporting reviews** — searchable, filter by category / channel / date (sentiment secondary)
+Read-only Streamlit app (all analysis is precomputed into `data/insights.json` + `item_insight` table), card layout
+(`streamlit_app.py` + `mms/ui.py`). **Tap any card, row or chart point** to open a right-side panel with the comments behind it
+(avatar, handle, channel, UNHAPPY / REPLY NOW tags, Spanish quote + English MT, topic chip, "Said 2×" repeats, Load more).
+1. Header: **Date range** (7/30/90 days, all time, custom) + **Channels** filters; yellow banner when the last sync failed or is > 8 days old (`data/status.json`)
+2. KPI cards: Overall score /100 · Unhappy % · Needs reply now · Most requested (deltas vs the previous period of equal length)
+3. **How customers feel**: daily negative/neutral/positive lines; click a point → that day's comments (sentiment switch) · Today's overview
+4. **Top complaints**: 6 app product categories + 3 service groups; panel has a sub-issue filter and the full deep-dive (quotes + AI recommendations)
+5. **What people are asking for** (Popular / Growing) and **Reply first** (most urgent unhappy comments)
+6. **Product roadmap** (full 90-day analysis): top user problems, what users want, product improvement opportunities, category deep-dives, non-app issues
+7. **All comments**: searchable table, filter by category / sentiment (+ the global date / channel filters)
 
 Real feedback (counts, quotes, links) is kept separate from interpretation: "What users need" and
 "Potential product change" come from `recommendations.json` and are labelled **Recommendation (AI-generated)**.
