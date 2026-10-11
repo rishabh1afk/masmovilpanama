@@ -32,6 +32,13 @@ SENT_COL = {"negative": "#e05252", "neutral": "#a1a1aa", "positive": "#3b6fe0"}
 SENT_FILL = {"negative": "rgba(224,82,82,0.07)", "neutral": "rgba(161,161,170,0.06)", "positive": "rgba(59,111,224,0.07)"}
 
 e = lambda s: html.escape("" if s is None else str(s))
+_MD_SPECIAL = set("\\`*_{}[]()#+-.!|~<>$:=")
+
+
+def md(s):
+    """Escape user text for a Streamlit markdown widget label (no emphasis, links, LaTeX, directives or emoji codes)."""
+    s = " ".join(("" if s is None else str(s)).split())
+    return "".join("\\" + c if c in _MD_SPECIAL else c for c in s)
 
 
 def _jl(x):
@@ -183,17 +190,17 @@ def reply_first(v):
     return r.sort_values("urgency", ascending=False)
 
 
+SENT_LABEL = {"negative": "Unhappy", "positive": "Happy", "neutral": "Neutral"}
+
+
 def trend(v, start, end):
-    days = (pd.Timestamp(end) - pd.Timestamp(start)).days + 1
-    freq = "D" if days <= 120 else "W-MON"
+    """Comment counts per calendar day (Panama time) and sentiment, zero-filled, for any range length."""
     idx = pd.date_range(pd.Timestamp(start), pd.Timestamp(end), freq="D")
     g = v.groupby(["day", "sentiment"]).size().unstack(fill_value=0).reindex(idx, fill_value=0)
     for s in SENT_COL:
         if s not in g:
             g[s] = 0
-    if freq != "D":
-        g = g.resample("W-MON", label="left", closed="left").sum()
-    return g[list(SENT_COL)], freq
+    return g[list(SENT_COL)].astype(int)
 
 
 def overview(v, pv, comp, ask_rows, rng_label):
@@ -225,18 +232,20 @@ html, body, [data-testid="stAppViewContainer"], [data-testid="stHeader"] {backgr
 [data-testid="stWidgetLabel"] p {font-size:10.5px !important; font-weight:600 !important; color:#9ca3af !important; letter-spacing:.06em}
 [data-testid="stMain"] [data-testid="stSelectbox"] div[data-baseweb="select"] > div {background:#fff; border-color:#e5e7eb; border-radius:9px; font-size:13px}
 [data-testid="stMain"] [data-testid="stVerticalBlock"] {gap:0.9rem}
-div[class*="st-key-row_"] {gap:0 !important}
 div[class*="st-key-card_"] [data-testid="stVerticalBlock"] {gap:0.15rem}
 .mm-h1 {font-size:26px; font-weight:700; letter-spacing:-.01em; margin:4px 0 2px}
 .mm-sub {color:#6b7280; font-size:13px}
 .mm-lbl {font-size:10.5px; font-weight:600; color:#9ca3af; letter-spacing:.06em; text-transform:uppercase}
 .mm-banner {background:#fdf3c4; border:1px solid #f4e3a1; color:#7c5b06; border-radius:10px; padding:12px 16px; font-size:13px; line-height:1.55; margin:6px 0 2px}
 .mm-banner b {color:#5c4204}
-/* white cards = bordered st.containers */
-div[class*="st-key-card_"] {
-  background:#fff !important; border:1px solid #eceef1 !important; border-radius:14px !important; box-shadow:0 1px 3px rgba(16,24,40,.05) !important}
-div[class*="st-key-card_"] {padding:18px 20px 14px}
-.kpi {background:#fff; border:1px solid #eceef1; border-radius:14px; box-shadow:0 1px 3px rgba(16,24,40,.05); padding:18px 20px; height:158px}
+/* white cards = native bordered st.container(border=True, key="card_*" / "kpi_*"); CSS only restyles them */
+div[class*="st-key-card_"], div[class*="st-key-kpi_"] {
+  background:#fff !important; border:1px solid #eceef1 !important; border-radius:14px !important;
+  box-shadow:0 1px 3px rgba(16,24,40,.05) !important; padding:18px 20px 12px !important}
+div[class*="st-key-kpi_"] {gap:0.35rem !important; justify-content:space-between}
+.st-key-kpirow [data-testid="stColumn"] > div, .st-key-kpirow [data-testid="stColumn"] div:has(> div[class*="st-key-kpi_"]),
+.st-key-kpirow [data-testid="stColumn"] div[class*="st-key-kpi_"] {height:100%}
+.kpi {min-height:112px}
 .kpi .ic {width:28px; height:28px; border-radius:7px; background:#e8efff; color:#2f5fe0; display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:700; margin-bottom:14px}
 .kpi .v {font-size:30px; font-weight:700; letter-spacing:-.02em; margin-top:4px; line-height:1.15}
 .kpi .v small {font-size:15px; font-weight:500; color:#6b7280}
@@ -248,21 +257,26 @@ div[class*="st-key-card_"] {padding:18px 20px 14px}
 .card-h .r {font-size:11.5px; color:#9ca3af}
 .ov {font-size:13.5px; line-height:1.6; color:#374151}
 .ov .u {font-size:11.5px; color:#9ca3af; margin-top:14px}
-.lrow {display:flex; align-items:center; gap:12px; padding:9px 8px; border-radius:8px; margin:0 -8px}
-.lrow .b {flex:1; min-width:0}
-.lrow .n {font-size:13.5px; font-weight:500; color:#111827}
-.lrow .m {font-size:11.5px; color:#6b7280; margin-top:2px}
-.lrow .lq {font-size:13px; color:#111827; line-height:1.45; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden}
-.lrow .chev {color:#9ca3af; font-size:16px}
 .pill {font-size:10.5px; font-weight:600; border-radius:999px; padding:2px 9px; white-space:nowrap}
 .p-y {background:#fdf0c2; color:#9a6b00} .p-g {background:#dcfce7; color:#15803d} .p-r {background:#fde2e2; color:#b42318}
 .p-b {background:#e8efff; color:#2f5fe0} .p-n {background:#eef2f7; color:#94a3b8}
-div[class*="st-key-row_"], div[class*="st-key-kpi_"] {position:relative; gap:0 !important}
-div[class*="st-key-row_"]:hover .lrow {background:#f8fafc}
-div[class*="st-key-kpi_"]:hover .kpi {border-color:#d5dcf5}
-div[class*="st-key-row_"] div[class*="st-key-go_"], div[class*="st-key-kpi_"] div[class*="st-key-go_"] {position:absolute !important; inset:0; z-index:5}
-div[class*="st-key-go_"] button {width:100% !important; height:100% !important; opacity:0 !important; cursor:pointer}
-div[class*="st-key-go_"] .stButton, div[class*="st-key-go_"] [data-testid="stTooltipHoverTarget"] {width:100%; height:100%}
+/* list rows = native full-width tertiary st.button (key go_<row>) */
+div[class*="st-key-list_"] [data-testid="stVerticalBlock"], div[class*="st-key-card_"] div[class*="st-key-list_"] {gap:2px !important}
+div[class*="st-key-list_"] .stButton button {width:100%; justify-content:flex-start; text-align:left; padding:8px 10px; margin:0;
+  border-radius:8px; color:#111827; min-height:0; border:0}
+div[class*="st-key-list_"] .stButton button:hover {background:#f6f8fb; color:#111827}
+div[class*="st-key-list_"] .stButton button:focus:not(:active) {color:#111827}
+div[class*="st-key-list_"] .stButton button > div {width:100%; justify-content:space-between; gap:12px}
+div[class*="st-key-list_"] .stButton button > div > span:first-child {flex:1; min-width:0; display:flex !important;
+  align-items:center; justify-content:space-between; gap:12px; width:100%}
+div[class*="st-key-list_"] .stButton button [data-testid="stMarkdownContainer"] {flex:1; min-width:0}
+div[class*="st-key-list_"] .stButton button p {text-align:left; font-size:13.5px; line-height:1.5; margin:0; white-space:normal}
+div[class*="st-key-list_"] .stButton button strong {font-weight:500}
+div[class*="st-key-list_"] .stButton button p > span:not(.stMarkdownBadge) {font-size:11.5px}
+div[class*="st-key-list_"] .stButton button .stMarkdownBadge {float:right; margin:9px 0 0 10px; font-size:10.5px !important; font-weight:600}
+div[class*="st-key-list_"] .stButton button [data-testid="stIconMaterial"] {color:#9ca3af}
+div[class*="st-key-go_kpi_"] button {padding:0; min-height:0; font-size:12px; color:#2f5fe0}
+div[class*="st-key-go_kpi_"] button p {font-size:12px; white-space:nowrap; text-align:left}
 /* drawer */
 div[role="dialog"] {border-radius:0 !important}
 .dr-cat {font-size:10.5px; font-weight:700; color:#2f5fe0; letter-spacing:.07em; text-transform:uppercase}
@@ -301,12 +315,6 @@ def delta(cur, prev, unit, good_up=True):
     x = cur - prev
     cls = "" if x == 0 else ("up" if (x > 0) == good_up else "down")
     return f"<span class='{cls}'>{x:+d}{unit} vs previous period</span>"
-
-
-def lrow(title, meta, pill=None, pill_cls="p-y", quote=False):
-    t = f"<div class='lq'>“{e(title)}”</div>" if quote else f"<div class='n'>{e(title)}</div>"
-    p = f"<span class='pill {pill_cls}'>{e(pill)}</span>" if pill else "<span class='pill p-n'>—</span>"
-    return f"<div class='lrow mm'><div class='b'>{t}<div class='m'>{meta}</div></div>{p}<span class='chev'>›</span></div>"
 
 
 def handle(r):

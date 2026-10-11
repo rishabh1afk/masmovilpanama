@@ -66,7 +66,7 @@ h1, h2, h3 = st.columns([4.4, 2.2, 1.5], vertical_alignment="bottom")
 h1.markdown("<div class='mm'><div class='mm-h1'>Dashboard</div>"
             "<div class='mm-sub'>Tap any row or chart point to see the comments behind it.</div></div>", unsafe_allow_html=True)
 preset = h2.selectbox("DATE RANGE", list(PRESETS), index=2, key="rng",
-                      format_func=lambda k: f"{k} ({preset_range(k)[0]:%d %b} – {preset_range(k)[1]:%d %b})" if PRESETS[k] != "custom" else k)
+                      format_func=lambda k: k)
 chan_opts = ["All channels"] + [U.CH[c] for c in U.CH if c in set(D.channel)]
 chan = h3.selectbox("CHANNELS", chan_opts, key="chan")
 if PRESETS[preset] == "custom":
@@ -77,6 +77,7 @@ if PRESETS[preset] == "custom":
 else:
     start, end = preset_range(preset)
 RNG = U.rng(start, end)
+h1.caption(f"Showing {RNG} · {chan}")
 
 DC = D if chan == "All channels" else D[D.channel_label == chan]
 V = U.window(DC, start, end)
@@ -147,15 +148,15 @@ def open_drawer(kind, param=None):
         elif kind == "day":
             day, sent = param
             d0 = pd.Timestamp(day)
-            d1 = d0 + pd.Timedelta(days=6 if FREQ != "D" else 0)
-            df = V[(V.day >= d0) & (V.day <= d1)]
+            df = V[V.day == d0]
 
             def filt(x):
-                pick = st.segmented_control("Sentiment", ["negative", "neutral", "positive", "all"], default=sent,
-                                            key=f"sg_{key}", format_func=str.title) or "all"
+                pick = st.segmented_control("Sentiment", ["all", "negative", "positive", "neutral"], default=sent,
+                                            key=f"sg_{key}", format_func=lambda x: U.SENT_LABEL.get(x, "All")) or "all"
                 return x if pick == "all" else x[x.sentiment == pick]
-            lab = f"{d0:%a %d %b %Y}" if FREQ == "D" else f"Week of {d0:%d %b %Y}"
-            _body(key, "How customers feel", lab, df, filt=filt)
+            cnt = df.sentiment.value_counts()
+            _body(key, "How customers feel", f"{d0:%a %d %b %Y}", df, filt=filt,
+                  intro=lambda: st.caption(" · ".join(f"{U.SENT_LABEL[s]}: {int(cnt.get(s, 0))}" for s in ["negative", "positive", "neutral"])))
         elif kind == "reply":
             r0 = V[V.id == param]
             same = V[(V.author == r0.author.iloc[0]) & (V.id != param)] if len(r0) and r0.author.iloc[0] else V.iloc[0:0]
@@ -185,11 +186,14 @@ def open_drawer(kind, param=None):
     st.dialog(" ", width="medium", position="right")(body)()
 
 
-def clickable(key, html, kind, param=None):
-    with st.container(key=f"row_{key}"):
-        st.markdown(html, unsafe_allow_html=True)
-        if st.button("Open", key=f"go_{key}"):
-            open_drawer(kind, param)
+def row(key, title, meta, kind, param=None, pill=None, pill_color="orange", quote=False):
+    """One list row = one full-width native st.button (multi-line markdown label). The whole row is the click target."""
+    t = U.md(title)
+    t = f"“{t}”" if quote else f"**{t}**"
+    badge = f" :{pill_color}-badge[{U.md(pill)}]" if pill else ""
+    if st.button(f"{t}{badge}  \n:gray[{U.md(meta)}]", key=f"go_{key}", icon=":material/chevron_right:", icon_position="right",
+                 width="stretch", type="tertiary", help=None):
+        open_drawer(kind, param)
 
 
 def card_head(title, right=""):
@@ -200,18 +204,19 @@ def card_head(title, right=""):
 CMP = U.comparable(len(V), len(PV))
 sc, psc = U.score100(V), (U.score100(PV) if CMP else None)
 up, pup = U.unhappy_pct(V), (U.unhappy_pct(PV) if CMP else None)
-k1, k2, k3, k4 = st.columns(4)
+k1, k2, k3, k4 = st.container(key="kpirow").columns(4, gap="small")
 KP = [
     (k1, "score", U.kpi("♥", "Overall score", f"{sc if sc is not None else '–'}<small>/100</small>", U.delta(sc, psc, "", True))),
     (k2, "unhappy", U.kpi("▼", "Unhappy comments", f"{up if up is not None else '–'}%", U.delta(up, pup, " pts", False))),
     (k3, "needs_reply", U.kpi("!", "Needs reply now", f"{int(V.needs_reply.sum()):,}", f"{len(V):,} comments · {RNG}")),
     (k4, "ask", U.kpi("★", "Most requested", U.e(ASKS[0]["short"]) if ASKS else "–", f"in {RNG}", title_value=True)),
 ]
+KP_BTN = {"score": "By channel", "unhappy": "Read comments", "needs_reply": "Reply queue", "ask": "Read requests"}
 for col, kind, h in KP:
     with col:
-        with st.container(key=f"kpi_{kind}"):
+        with st.container(border=True, key=f"kpi_{kind}"):
             st.markdown(h, unsafe_allow_html=True)
-            if st.button("Open", key=f"go_kpi_{kind}"):
+            if st.button(KP_BTN[kind], key=f"go_kpi_{kind}", type="tertiary", icon=":material/arrow_forward:", icon_position="right"):
                 if kind == "ask":
                     if ASKS:
                         open_drawer("ask", ASKS[0]["ask"])
@@ -219,32 +224,35 @@ for col, kind, h in KP:
                     open_drawer(kind)
 
 # ------------------------------------------------------------------ trend + overview
-TR, FREQ = U.trend(V, start, end)
+TR = U.trend(V, start, end)
 c1, c2 = st.columns([2.2, 1])
 with c1:
-    with st.container(key="card_trend"):
+    with st.container(border=True, key="card_trend"):
         st.markdown(card_head("How customers feel", f"{RNG} · tap a point for details"), unsafe_allow_html=True)
         fig = go.Figure()
-        for s in ["neutral", "positive", "negative"]:
-            fig.add_scatter(x=TR.index, y=TR[s], name=s.title(), mode="lines+markers", line=dict(color=U.SENT_COL[s], width=2, shape="spline", smoothing=0.9),
-                            marker=dict(size=6, color=U.SENT_COL[s], opacity=0.0), fill="tozeroy", fillcolor=U.SENT_FILL[s],
-                            hovertemplate="%{x|%d %b %Y}<br>" + s.title() + ": %{y}<extra></extra>")
+        ORDER = ["negative", "positive", "neutral"]          # tooltip order: Unhappy, Happy, Neutral
+        for s in ORDER:
+            fig.add_scatter(x=TR.index, y=TR[s], name=U.SENT_LABEL[s], mode="lines+markers",
+                            line=dict(color=U.SENT_COL[s], width=2.2, shape="spline", smoothing=1.0 if len(TR) <= 45 else 0.6),
+                            marker=dict(size=7 if len(TR) <= 45 else 4, color=U.SENT_COL[s], opacity=0.9 if len(TR) <= 45 else 0.0),
+                            fill="tozeroy" if s != "neutral" else None, fillcolor=U.SENT_FILL[s],
+                            hovertemplate=U.SENT_LABEL[s] + ": %{y}<extra></extra>")
         fig.update_layout(height=372, margin=dict(l=0, r=6, t=6, b=0), paper_bgcolor="white", plot_bgcolor="white",
-                          hovermode="closest", showlegend=True, clickmode="event+select", dragmode=False,
+                          hovermode="x unified", showlegend=True, clickmode="event+select", dragmode=False,
+                          hoverlabel=dict(bgcolor="white", bordercolor="#e5e7eb", font=dict(size=12, family="Inter, sans-serif")),
                           legend=dict(orientation="h", x=1, xanchor="right", y=1.1, font=dict(size=11, color="#6b7280")),
                           font=dict(family="Inter, sans-serif", color="#6b7280", size=11))
-        fig.update_xaxes(showgrid=False, tickformat="%d %b", linecolor="#e5e7eb")
+        fig.update_xaxes(showgrid=False, tickformat="%-d %b", hoverformat="%-d %b", linecolor="#e5e7eb",
+                         showspikes=True, spikemode="across", spikethickness=1, spikecolor="#d1d5db", spikedash="solid")
         fig.update_yaxes(gridcolor="#eef0f3", griddash="dash", zeroline=False, rangemode="tozero")
         ev = st.plotly_chart(fig, key=f"trend_{ss.chart_nonce}", on_select="rerun", selection_mode="points",
                              config={"displayModeBar": False}, width="stretch")
         pts = (ev or {}).get("selection", {}).get("points", []) if ev else []
         if pts:
-            p = pts[0]
-            sent = ["neutral", "positive", "negative"][p.get("curve_number", 2)]
             ss.chart_nonce += 1          # remount the chart next run so the selection doesn't re-open the panel
-            open_drawer("day", (str(pd.Timestamp(p["x"]).date()), sent))
+            open_drawer("day", (str(pd.Timestamp(pts[0]["x"]).date()), "all"))
 with c2:
-    with st.container(key="card_overview"):
+    with st.container(border=True, key="card_overview"):
         upd = U.last_updated(status)
         st.markdown(card_head("Today's overview", "Today") +
                     f"<div class='ov mm'>{U.overview(V, PV, COMP, ASKS, RNG)}"
@@ -256,41 +264,47 @@ with c2:
             for c, n in V.channel_label.value_counts().items()) + "</div>", unsafe_allow_html=True)
 
 # ------------------------------------------------------------------ top complaints
-with st.container(key="card_complaints"):
+with st.container(border=True, key="card_complaints"):
     st.markdown(card_head("Top complaints", RNG), unsafe_allow_html=True)
     if not COMP:
         st.caption("No classified complaints in this range.")
+    lst = st.container(key="list_complaints")
     for i, c in enumerate(COMP[:9]):
         pill, cls = ("Rising", "p-r") if c["rising"] else ("Many posts", "p-y") if c["n"] >= 20 else ("Some posts", "p-b") if c["n"] >= 5 else ("Few posts", "p-n")
         meta = f"{c['n']:,} comments · {c['pct']}% of complaints" + (" · service, not app" if c["service"] else "")
-        clickable(f"c{i}", U.lrow(c["name"], meta, pill, cls), "complaint", c["name"])
+        with lst:
+            row(f"c{i}", c["name"], meta, "complaint", c["name"], pill, {"p-r": "red", "p-y": "orange", "p-b": "blue", "p-n": "gray"}[cls])
 
 # ------------------------------------------------------------------ asks + reply first
 a1, a2 = st.columns([1.55, 1])
 with a1:
-    with st.container(key="card_asks"):
+    with st.container(border=True, key="card_asks"):
         st.markdown(card_head("What people are asking for", RNG), unsafe_allow_html=True)
         if not ASKS:
             st.caption("No requests in this range.")
+        lst = st.container(key="list_asks")
         for i, a in enumerate(ASKS[:8]):
-            clickable(f"a{i}", U.lrow(a["short"], f"{a['n']:,} comments · tap to read them", a["pill"],
-                                      "p-g" if a["pill"] == "Popular" else "p-y"), "ask", a["ask"])
+            with lst:
+                row(f"a{i}", a["short"], f"{a['n']:,} comments · tap to read them", "ask", a["ask"], a["pill"],
+                    "green" if a["pill"] == "Popular" else "orange")
 with a2:
-    with st.container(key="card_reply"):
+    with st.container(border=True, key="card_reply"):
         st.markdown(card_head("Reply first", RNG), unsafe_allow_html=True)
         if RF.empty:
             st.caption("Nothing waiting for a reply in this range.")
+        lst = st.container(key="list_reply")
         for i, r in enumerate(RF.head(6).itertuples()):
             t = (r.text or "").strip()
-            clickable(f"r{i}", U.lrow(t[:160] + ("…" if len(t) > 160 else ""), f"{U.e(U.handle(r))} · {U.e(r.channel_label)} · {r.kind}",
-                                      "Reply now", "p-y", quote=True), "reply", r.id)
+            with lst:
+                row(f"r{i}", t[:140] + ("…" if len(t) > 140 else ""), f"{U.handle(r)} · {r.channel_label} · {r.kind}", "reply", r.id,
+                    "Reply now", "orange", quote=True)
         if len(RF) > 6:
             if st.button(f"See all {len(RF):,} comments to answer", key="all_reply", type="tertiary"):
                 open_drawer("needs_reply")
 
 # ------------------------------------------------------------------ product roadmap (previous deep-dives, kept)
 cats = [c for c in ins["categories"] if c["category"] != P.NONAPP_CATEGORY]
-with st.container(key="card_roadmap"):
+with st.container(border=True, key="card_roadmap"):
     cov = ins["coverage"]
     st.markdown(card_head("Product roadmap", f"full analysis {cov['start']} – {cov['end']} · not affected by the filters above"),
                 unsafe_allow_html=True)
@@ -316,7 +330,7 @@ with st.container(key="card_roadmap"):
         st.markdown(R.category(ins, P.NONAPP_CATEGORY), unsafe_allow_html=True)
 
 # ------------------------------------------------------------------ all comments (searchable table, kept)
-with st.container(key="card_table"):
+with st.container(border=True, key="card_table"):
     st.markdown(card_head("All comments", f"{RNG} · {chan}"), unsafe_allow_html=True)
     f1, f2, f3 = st.columns([2.2, 1.6, 2.2])
     groups = P.APP_CATEGORIES + list(U.NONAPP_ID)
