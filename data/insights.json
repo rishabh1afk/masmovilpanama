@@ -1,20 +1,20 @@
 {
- "generated_at": "2026-10-19T01:11:00.945671+00:00",
+ "generated_at": "2026-10-26T01:22:39.554009+00:00",
  "rules_version": 5,
  "coverage": {
-  "n_items": 1834,
-  "n_app": 977,
-  "n_app_issue": 170,
-  "n_nonapp": 341,
-  "start": "2026-07-19",
-  "end": "2026-10-17",
+  "n_items": 1833,
+  "n_app": 1000,
+  "n_app_issue": 173,
+  "n_nonapp": 338,
+  "start": "2026-07-26",
+  "end": "2026-10-24",
   "channels": {
    "App Store": 71,
    "Facebook": 63,
-   "Google Play": 891,
+   "Google Play": 915,
    "Instagram": 380,
    "TikTok": 81,
-   "X": 348
+   "X": 323
   }
  },
  "method": {
@@ -26,8 +26,8 @@
  "categories": [
   {
    "category": "Bugs & Technical Issues",
-   "n": 68,
-   "pct": 7.0,
+   "n": 72,
+   "pct": 7.2,
    "subissues": [
     "bug_errors",
     "bug_login",
@@ -39,20 +39,21 @@
   {
    "category": "Payments & Transactions",
    "n": 60,
-   "pct": 6.1,
+   "pct": 6.0,
    "subissues": [
     "pay_failed",
     "pay_extra_day",
     "pay_methods",
     "pay_balance_not_accepted",
     "pay_autopay",
-    "pay_charged_not_applied"
+    "pay_charged_not_applied",
+    "pay_billing"
    ]
   },
   {
    "category": "Account & Services",
-   "n": 33,
-   "pct": 3.4,
+   "n": 31,
+   "pct": 3.1,
    "subissues": [
     "acct_rewards",
     "acct_plans",
@@ -71,18 +72,18 @@
   },
   {
    "category": "UX & Navigation",
-   "n": 12,
-   "pct": 1.2,
+   "n": 11,
+   "pct": 1.1,
    "subissues": [
     "ux_slow",
-    "ux_ads",
-    "ux_confusing"
+    "ux_confusing",
+    "ux_ads"
    ]
   },
   {
    "category": "Missing Features",
-   "n": 9,
-   "pct": 0.9,
+   "n": 10,
+   "pct": 1.0,
    "subissues": [
     "feat_request",
     "feat_share_balance"
@@ -90,8 +91,8 @@
   },
   {
    "category": "Non-app / service issues",
-   "n": 341,
-   "pct": 18.6,
+   "n": 338,
+   "pct": 18.4,
    "subissues": [
     "svc_network",
     "svc_pricing",
@@ -108,18 +109,19 @@
    "n": 14,
    "pct": 1.4,
    "pct_base": "app feedback",
-   "pct_complaints": 8.2,
+   "pct_complaints": 8.1,
    "n_rule": 10,
    "n_embedding": 4,
    "n_negative": 14,
    "n_requests": 1,
    "channels": {
-    "Google Play": 14
+    "Google Play": 13,
+    "Instagram": 1
    },
    "priority": "High",
    "priority_score": 42,
    "first_seen": "2026-07-29",
-   "last_seen": "2026-10-16",
+   "last_seen": "2026-10-03",
    "quotes": [
     {
      "es": "La aplicación no parece funcionar correctamente. Cada vez que intento usarla, me aparece un error que me indica descargarla desde Google Play. Lo he hecho, pero sigue ocurriendo lo mismo. ¿Podría alguien explicármelo, por favor?",
@@ -159,22 +161,22 @@
    "category": "Bugs & Technical Issues",
    "label": "Can't log in / sign-in & verification code failures",
    "severity": 3,
-   "n": 21,
-   "pct": 2.1,
+   "n": 22,
+   "pct": 2.2,
    "pct_base": "app feedback",
-   "pct_complaints": 12.4,
-   "n_rule": 17,
+   "pct_complaints": 12.7,
+   "n_rule": 18,
    "n_embedding": 4,
-   "n_negative": 21,
+   "n_negative": 22,
    "n_requests": 0,
    "channels": {
-    "Google Play": 18,
+    "Google Play": 19,
     "App Store": 3
    },
    "priority": "High",
-   "priority_score": 63,
+   "priority_score": 66,
    "first_seen": "2026-07-29",
-   "last_seen": "2026-10-14",
+   "last_seen": "2026-10-20",
    "quotes": [
     {
      "es": "Se actualizó o algo y ya no puedo ingresar. Intento ingresar mi contraseña y me dice que no es la correcta. intento ingresar por OTP y los códigos que envían me dicen que no son correctos. Estoy fuera de mi cuenta otra vez. TODO MAL.",
@@ -217,7 +219,7 @@
    "n": 4,
    "pct": 0.4,
    "pct_base": "app feedback",
-   "pct_complaints": 2.4,
+   "pct_complaints": 2.3,
    "n_rule": 4,
    "n_embedding": 0,
    "n_negative": 3,
@@ -270,22 +272,22 @@
    "category": "Bugs & Technical Issues",
    "label": "Errors / 'under maintenance' / features not working",
    "severity": 2,
-   "n": 29,
-   "pct": 3.0,
+   "n": 32,
+   "pct": 3.2,
    "pct_base": "app feedback",
-   "pct_complaints": 17.1,
-   "n_rule": 26,
-   "n_embedding": 3,
-   "n_negative": 29,
-   "n_requests": 3,
+   "pct_complaints": 18.5,
+   "n_rule": 28,
+   "n_embedding": 4,
+   "n_negative": 32,
+   "n_requests": 2,
    "channels": {
-    "Google Play": 25,
-    "App Store": 4
+    "Google Play": 26,
+    "App Store": 6
    },
-   "priority": "Medium",
-   "priority_score": 58,
-   "first_seen": "2026-07-21",
-   "last_seen": "2026-10-17",
+   "priority": "High",
+   "priority_score": 64,
+   "first_seen": "2026-07-28",
+   "last_seen": "2026-10-22",
    "quotes": [
     {
      "es": "Mala, no sirve para lo que realmente se necesita, no entiendo porqué sugieren el uso de la aplicación para realizar pagos si para eso es lo que menos sirve; llevo 4 meses intentando hacer pagos con la tarjeta de crédito y no he podido realizarlos a través la aplicación.",
@@ -380,24 +382,24 @@
    "category": "Payments & Transactions",
    "label": "Payments / recharges fail or card is rejected",
    "severity": 3,
-   "n": 23,
+   "n": 24,
    "pct": 2.4,
    "pct_base": "app feedback",
-   "pct_complaints": 13.5,
-   "n_rule": 17,
+   "pct_complaints": 13.9,
+   "n_rule": 18,
    "n_embedding": 6,
-   "n_negative": 23,
+   "n_negative": 24,
    "n_requests": 0,
    "channels": {
-    "Google Play": 19,
+    "Google Play": 20,
     "App Store": 2,
     "Instagram": 1,
     "X": 1
    },
    "priority": "High",
-   "priority_score": 69,
+   "priority_score": 72,
    "first_seen": "2026-07-28",
-   "last_seen": "2026-10-10",
+   "last_seen": "2026-10-19",
    "quotes": [
     {
      "es": "esta muy bien la aplicación exelente pero hoy 27/7/2026 tuve un problema meti una tarjeta de 5$ y queria poner la promoción de 1 dia adicional y la oferta estaba en mantenimiento y espere y por esperar me empezaron a cobrar centavos en total me cobraron 80¢ de los 5$ y tuve que comprar una tarjeta de 3 dias 😠😠",
@@ -437,23 +439,23 @@
    "category": "Payments & Transactions",
    "label": "Recharge bonus ('día extra' / extra days) not selectable or not applied",
    "severity": 2,
-   "n": 18,
-   "pct": 1.8,
+   "n": 17,
+   "pct": 1.7,
    "pct_base": "app feedback",
-   "pct_complaints": 10.6,
-   "n_rule": 16,
+   "pct_complaints": 9.8,
+   "n_rule": 15,
    "n_embedding": 2,
-   "n_negative": 17,
-   "n_requests": 5,
+   "n_negative": 16,
+   "n_requests": 4,
    "channels": {
-    "Google Play": 12,
+    "Google Play": 11,
     "Instagram": 4,
     "App Store": 1,
     "X": 1
    },
    "priority": "Medium",
-   "priority_score": 36,
-   "first_seen": "2026-07-24",
+   "priority_score": 34,
+   "first_seen": "2026-07-28",
    "last_seen": "2026-10-13",
    "quotes": [
     {
@@ -495,12 +497,12 @@
      "method": "rule"
     },
     {
-     "es": "Normalmente pienso que es horrible porque cuando tratas de utilizar el supuesto día extra que te dan siempre dice en mantenimiento utilice otra opción segundo los precios Están carísimos porque dan pésimo servicio y quieren que paguemos más por la misma basura de servicio deben rebajar los precios si van a dar un pésim",
-     "en": "Normally I think it's horrible because when you try to use the supposed extra day that you always say in maintenance use another second option the prices are very expensive because they give lousy service and they want us to pay more for the same service trash they should lower the prices if they are going to give a lo",
+     "es": "La Apps me ha facilitado el tener que ir por tarjetas siempre, ya que puedo pagar con yappy la recarga con 1 día extra en la de 5.00. Podrían agregar las 2 opciones por favor, comprar paquetes y recargar, gracias",
+     "en": "The Apps has made it easier for me to always go for cards, as I can pay with yappy the charge with 1 extra day on the 5.00. You could add the 2 options please, buy packages and reload, thank you",
      "channel": "Google Play",
-     "date": "24 Jul 2026",
-     "url": "https://play.google.com/store/apps/details?id=com.cwp.app&hl=es&gl=PA&reviewId=4370858f-f139-4e5d-8a6e-611fbbda0f51",
-     "rating": 1.0,
+     "date": "23 Sep 2026",
+     "url": "https://play.google.com/store/apps/details?id=com.cwp.app&hl=es&gl=PA&reviewId=f5cf713a-2626-4a61-8981-ca4009a25eab",
+     "rating": 4.0,
      "method": "rule"
     }
    ],
@@ -513,32 +515,22 @@
    "category": "Payments & Transactions",
    "label": "Charged but recharge / package not applied, or double charge",
    "severity": 3,
-   "n": 3,
-   "pct": 0.3,
+   "n": 2,
+   "pct": 0.2,
    "pct_base": "app feedback",
-   "pct_complaints": 1.8,
-   "n_rule": 3,
+   "pct_complaints": 1.2,
+   "n_rule": 2,
    "n_embedding": 0,
-   "n_negative": 3,
+   "n_negative": 2,
    "n_requests": 0,
    "channels": {
-    "Google Play": 2,
-    "App Store": 1
+    "Google Play": 2
    },
    "priority": "Low",
-   "priority_score": 9,
-   "first_seen": "2026-07-24",
+   "priority_score": 6,
+   "first_seen": "2026-08-01",
    "last_seen": "2026-09-12",
    "quotes": [
-    {
-     "es": "Recarga fallida. Hice una recarga, me descontaron el dinero de mi tarjeta de crédito y no activaron el plan, el app no es confiable si ahora tengo que esperar que hagan un análisis a pesar de que aporte el comprobante de cargo a mi tarjeta y no me pueden hacer efectivo mi plan",
-     "en": "Reload failed. I did a reload, I was discounted my credit card money and they didn't activate the plan, the app is not reliable if now I have to wait for them to do an analysis even though I contribute the proof of charge to my card and I can't make my plan effective.",
-     "channel": "App Store",
-     "date": "24 Jul 2026",
-     "url": "https://apps.apple.com/pa/app/mi-mas/id1391146262?see-all=reviews",
-     "rating": 1.0,
-     "method": "rule"
-    },
     {
      "es": "No entiendo esto del premio además muy inconforme cuando he pedido adelanto y he comprado paquetes de data y minutos gratis, en dos ocasiones no me mandaron la data y me la cobraron.",
      "en": "I don't understand this award as well as very disagreeable when I asked for advance and bought free data packages and minutes, twice they didn't send me the data and they charged me.",
@@ -559,7 +551,7 @@
     }
    ],
    "request_quotes": [],
-   "evidence_url": "https://apps.apple.com/pa/app/mi-mas/id1391146262?see-all=reviews",
+   "evidence_url": "https://play.google.com/store/apps/details?id=com.cwp.app&hl=es&gl=PA&reviewId=b624343d-0dcc-44b4-8642-cdb251bd7bb5",
    "user_need": "When charged, the package or plan is activated (or refunded) automatically",
    "product_change": "Make charge and activation atomic: auto-reverse or auto-retry failed activations; show order status and receipt in the app; give support a self-serve claim flow"
   },
@@ -571,7 +563,7 @@
    "n": 4,
    "pct": 0.4,
    "pct_base": "app feedback",
-   "pct_complaints": 2.4,
+   "pct_complaints": 2.3,
    "n_rule": 4,
    "n_embedding": 0,
    "n_negative": 4,
@@ -626,7 +618,7 @@
    "n": 10,
    "pct": 1.0,
    "pct_base": "app feedback",
-   "pct_complaints": 5.9,
+   "pct_complaints": 5.8,
    "n_rule": 10,
    "n_embedding": 0,
    "n_negative": 10,
@@ -692,7 +684,7 @@
    "n": 13,
    "pct": 1.3,
    "pct_base": "app feedback",
-   "pct_complaints": 7.6,
+   "pct_complaints": 7.5,
    "n_rule": 13,
    "n_embedding": 0,
    "n_negative": 12,
@@ -735,20 +727,46 @@
      "method": "rule"
     }
    ],
-   "request_quotes": [
-    {
-     "es": "La Apps me ha facilitado el tener que ir por tarjetas siempre, ya que puedo pagar con yappy la recarga con 1 día extra en la de 5.00. Podrían agregar las 2 opciones por favor, comprar paquetes y recargar, gracias",
-     "en": "The Apps has made it easier for me to always go for cards, as I can pay with yappy the charge with 1 extra day on the 5.00. You could add the 2 options please, buy packages and reload, thank you",
-     "channel": "Google Play",
-     "date": "23 Sep 2026",
-     "url": "https://play.google.com/store/apps/details?id=com.cwp.app&hl=es&gl=PA&reviewId=f5cf713a-2626-4a61-8981-ca4009a25eab",
-     "rating": 4.0,
-     "method": "rule"
-    }
-   ],
+   "request_quotes": [],
    "evidence_url": "https://play.google.com/store/apps/details?id=com.cwp.app&hl=es&gl=PA&reviewId=726d0548-6d8d-4d00-ab13-b7f3ab5e37ec",
    "user_need": "Choose any payment method (card, debit, scratch-card balance), not only Yappy",
    "product_change": "Offer the same promos across all payment methods, or show clearly which method each promo needs; let users add and save multiple cards; fix 'método de pago en mantenimiento'"
+  },
+  {
+   "id": "pay_billing",
+   "category": "Payments & Transactions",
+   "label": "Bill / invoice visibility and payment in app",
+   "severity": 2,
+   "n": 1,
+   "pct": 0.1,
+   "pct_base": "app feedback",
+   "pct_complaints": 0.6,
+   "n_rule": 1,
+   "n_embedding": 0,
+   "n_negative": 1,
+   "n_requests": 0,
+   "channels": {
+    "Google Play": 1
+   },
+   "priority": "Low",
+   "priority_score": 2,
+   "first_seen": "2026-10-19",
+   "last_seen": "2026-10-19",
+   "quotes": [
+    {
+     "es": "siempre recibía el estado de cuenta sin estar en la app",
+     "en": "always received the statement without being in the app",
+     "channel": "Google Play",
+     "date": "19 Oct 2026",
+     "url": "https://play.google.com/store/apps/details?id=com.cwp.app&hl=es&gl=PA&reviewId=25d2f027-e505-4966-a30e-8c1065020572",
+     "rating": 1.0,
+     "method": "rule"
+    }
+   ],
+   "request_quotes": [],
+   "evidence_url": "https://play.google.com/store/apps/details?id=com.cwp.app&hl=es&gl=PA&reviewId=25d2f027-e505-4966-a30e-8c1065020572",
+   "user_need": null,
+   "product_change": null
   },
   {
    "id": "acct_usage",
@@ -800,22 +818,22 @@
    "category": "Account & Services",
    "label": "Rewards (premios, cupones, puntos, giros) unclear, expiring or not delivered",
    "severity": 1,
-   "n": 23,
-   "pct": 2.4,
+   "n": 22,
+   "pct": 2.2,
    "pct_base": "app feedback",
-   "pct_complaints": 13.5,
-   "n_rule": 23,
+   "pct_complaints": 12.7,
+   "n_rule": 22,
    "n_embedding": 0,
-   "n_negative": 20,
+   "n_negative": 19,
    "n_requests": 4,
    "channels": {
-    "Google Play": 21,
+    "Google Play": 20,
     "App Store": 1,
     "Instagram": 1
    },
    "priority": "Medium",
-   "priority_score": 23,
-   "first_seen": "2026-07-20",
+   "priority_score": 22,
+   "first_seen": "2026-07-29",
    "last_seen": "2026-10-15",
    "quotes": [
     {
@@ -875,20 +893,20 @@
    "category": "Account & Services",
    "label": "Plans / packages: can't find, buy or change in app",
    "severity": 2,
-   "n": 7,
-   "pct": 0.7,
+   "n": 6,
+   "pct": 0.6,
    "pct_base": "app feedback",
-   "pct_complaints": 4.1,
-   "n_rule": 7,
+   "pct_complaints": 3.5,
+   "n_rule": 6,
    "n_embedding": 0,
-   "n_negative": 5,
+   "n_negative": 4,
    "n_requests": 4,
    "channels": {
-    "Google Play": 7
+    "Google Play": 6
    },
    "priority": "Low",
-   "priority_score": 14,
-   "first_seen": "2026-07-22",
+   "priority_score": 12,
+   "first_seen": "2026-07-29",
    "last_seen": "2026-10-01",
    "quotes": [
     {
@@ -901,20 +919,20 @@
      "method": "rule"
     },
     {
-     "es": "fatal! hago recarga por el app, quiero activar el plan de 6 dias +1, y para la opcion de pago, me sale que esta en mantenimiento! fatal servicio!",
-     "en": "fatal! I reload by the app, I want to activate the 6 day plan +1, and for the payment option, I get that it is in maintenance! fatal service!",
-     "channel": "Google Play",
-     "date": "22 Jul 2026",
-     "url": "https://play.google.com/store/apps/details?id=com.cwp.app&hl=es&gl=PA&reviewId=5aa00d92-1b0e-43e7-8d0c-3d8c36d4e27d",
-     "rating": 1.0,
-     "method": "rule"
-    },
-    {
      "es": "Mi antepenintima compra fue un chasco y tube qué comprar un paquete adicional por no explicae bien las promociones",
      "en": "My antepenintima purchase was a shock and tube what to buy an additional package by not explaining the promotions well",
      "channel": "Google Play",
      "date": "20 Aug 2026",
      "url": "https://play.google.com/store/apps/details?id=com.cwp.app&hl=es&gl=PA&reviewId=eaa3c9e8-da90-47cf-8170-036e5f709c66",
+     "rating": 1.0,
+     "method": "rule"
+    },
+    {
+     "es": "mala xq si no hay data no abre no es como tigo entras al ap sin data y compras tu paquete",
+     "en": "bad xq if no data doesn't open it's not like you enter the ap without data and buy your package",
+     "channel": "Google Play",
+     "date": "29 Jul 2026",
+     "url": "https://play.google.com/store/apps/details?id=com.cwp.app&hl=es&gl=PA&reviewId=d63ecb8b-27ff-414d-abc1-b64da76df11e",
      "rating": 1.0,
      "method": "rule"
     }
@@ -979,19 +997,19 @@
    "n": 17,
    "pct": 1.7,
    "pct_base": "app feedback",
-   "pct_complaints": 10.0,
+   "pct_complaints": 9.8,
    "n_rule": 16,
    "n_embedding": 1,
    "n_negative": 15,
-   "n_requests": 5,
+   "n_requests": 6,
    "channels": {
-    "Google Play": 15,
-    "App Store": 2
+    "Google Play": 16,
+    "App Store": 1
    },
    "priority": "High",
    "priority_score": 51,
-   "first_seen": "2026-07-20",
-   "last_seen": "2026-10-17",
+   "first_seen": "2026-07-29",
+   "last_seen": "2026-10-19",
    "quotes": [
     {
      "es": "Cómo se supone que uno va comprar data, si para entrar a la app necesita data, si estoy comprando es por no tengo y necesito comprar, otra cosa había un canje y no me dieron nadaaa solo aparecía como si lo hubiera recibido",
@@ -1140,21 +1158,22 @@
    "category": "UX & Navigation",
    "label": "Hard to use / confusing navigation / worse after redesign",
    "severity": 1,
-   "n": 2,
-   "pct": 0.2,
+   "n": 3,
+   "pct": 0.3,
    "pct_base": "app feedback",
-   "pct_complaints": 1.2,
-   "n_rule": 2,
+   "pct_complaints": 1.7,
+   "n_rule": 3,
    "n_embedding": 0,
-   "n_negative": 2,
+   "n_negative": 3,
    "n_requests": 0,
    "channels": {
-    "Google Play": 2
+    "Google Play": 2,
+    "App Store": 1
    },
    "priority": "Low",
-   "priority_score": 2,
+   "priority_score": 3,
    "first_seen": "2026-08-31",
-   "last_seen": "2026-10-01",
+   "last_seen": "2026-10-20",
    "quotes": [
     {
      "es": "Poco intuitiva e informativa, solo sirve para pagar... no te muestra ninguna información relevante de tus cuentas... Los menos se sienten vacíos y sin sentido... la app de Tigo le da 3 vueltas...",
@@ -1163,6 +1182,15 @@
      "date": "31 Aug 2026",
      "url": "https://play.google.com/store/apps/details?id=com.cwp.app&hl=es&gl=PA&reviewId=c468767e-ce2f-4072-a183-42acd2f78a7b",
      "rating": 1.0,
+     "method": "rule"
+    },
+    {
+     "es": "Confusión. Estoy intentando realizar los pasos que me envían y no sale como es",
+     "en": "I'm trying to do the steps they send me and it doesn't go the way it is.",
+     "channel": "App Store",
+     "date": "20 Oct 2026",
+     "url": "https://apps.apple.com/pa/app/mi-mas/id1391146262?see-all=reviews",
+     "rating": 3.0,
      "method": "rule"
     }
    ],
@@ -1176,21 +1204,21 @@
    "category": "UX & Navigation",
    "label": "Slow app / takes long to load",
    "severity": 1,
-   "n": 8,
-   "pct": 0.8,
+   "n": 6,
+   "pct": 0.6,
    "pct_base": "app feedback",
-   "pct_complaints": 4.7,
-   "n_rule": 7,
+   "pct_complaints": 3.5,
+   "n_rule": 5,
    "n_embedding": 1,
-   "n_negative": 8,
+   "n_negative": 6,
    "n_requests": 0,
    "channels": {
-    "Google Play": 6,
+    "Google Play": 4,
     "App Store": 2
    },
    "priority": "Low",
-   "priority_score": 8,
-   "first_seen": "2026-07-22",
+   "priority_score": 6,
+   "first_seen": "2026-08-22",
    "last_seen": "2026-10-17",
    "quotes": [
     {
@@ -1277,21 +1305,21 @@
    "category": "Missing Features",
    "label": "Other explicit feature requests",
    "severity": 1,
-   "n": 7,
-   "pct": 0.7,
+   "n": 8,
+   "pct": 0.8,
    "pct_base": "app feedback",
-   "pct_complaints": 4.1,
-   "n_rule": 7,
+   "pct_complaints": 4.6,
+   "n_rule": 8,
    "n_embedding": 0,
    "n_negative": 4,
-   "n_requests": 5,
+   "n_requests": 6,
    "channels": {
-    "Google Play": 7
+    "Google Play": 8
    },
    "priority": "Low",
-   "priority_score": 7,
+   "priority_score": 8,
    "first_seen": "2026-08-14",
-   "last_seen": "2026-10-06",
+   "last_seen": "2026-10-21",
    "quotes": [
     {
      "es": "Sería bueno que se pudiera configurar el wi-fi y el internet de casa mediante la página web o la aplicación porque te manda para una aplicación que no está disponible en Panamá",
@@ -1323,6 +1351,15 @@
    ],
    "request_quotes": [
     {
+     "es": "Gracias por la app,pero si la idea es que uno recargue desde la app, entonces pongan que se pueda usar sin internetde que sirve tener esa app si no puedes reacargar,si no hay internet?",
+     "en": "Thanks for the app,but if the idea is that one will reload from the app, then say that it can be used without internetde that it is useful to have that app if you can not reload,if there is no internet?",
+     "channel": "Google Play",
+     "date": "21 Oct 2026",
+     "url": "https://play.google.com/store/apps/details?id=com.cwp.app&hl=es&gl=PA&reviewId=71aa0874-5661-4ca7-8a09-c3d622ca08f5",
+     "rating": 4.0,
+     "method": "rule"
+    },
+    {
      "es": "buena a pp solo que deberían poner que con 3 dolar uno pueda tener wassap por 4 días como antes",
      "en": "good to pp only that should put that with 3 dollar one can have wassap for 4 days as before",
      "channel": "Google Play",
@@ -1341,26 +1378,26 @@
    "category": "Non-app / service issues",
    "label": "Network signal, coverage & outages",
    "severity": 2,
-   "n": 201,
-   "pct": 11.0,
+   "n": 203,
+   "pct": 11.1,
    "pct_base": "all feedback",
-   "pct_complaints": 58.9,
-   "n_rule": 201,
+   "pct_complaints": 60.1,
+   "n_rule": 203,
    "n_embedding": 0,
-   "n_negative": 162,
-   "n_requests": 20,
+   "n_negative": 165,
+   "n_requests": 21,
    "channels": {
     "Instagram": 86,
-    "X": 43,
+    "X": 41,
+    "Google Play": 27,
     "TikTok": 25,
-    "Google Play": 24,
     "Facebook": 20,
-    "App Store": 3
+    "App Store": 4
    },
    "priority": "High",
-   "priority_score": 402,
-   "first_seen": "2026-07-23",
-   "last_seen": "2026-10-17",
+   "priority_score": 406,
+   "first_seen": "2026-07-29",
+   "last_seen": "2026-10-24",
    "quotes": [
     {
      "es": "tiene demasiados errores para recargar, para activar promociones, caídas de servicios, ahora si uno recarga con tarjetas ya ni el supuesto de MasApp puede activar, así que, ¿para que la app? en fin.",
@@ -1419,26 +1456,26 @@
    "category": "Non-app / service issues",
    "label": "Price increases, bill hikes & expensive plans",
    "severity": 2,
-   "n": 100,
-   "pct": 5.5,
+   "n": 97,
+   "pct": 5.3,
    "pct_base": "all feedback",
-   "pct_complaints": 29.3,
-   "n_rule": 100,
+   "pct_complaints": 28.7,
+   "n_rule": 97,
    "n_embedding": 0,
-   "n_negative": 83,
-   "n_requests": 6,
+   "n_negative": 80,
+   "n_requests": 5,
    "channels": {
     "Instagram": 49,
-    "X": 22,
-    "Google Play": 17,
+    "X": 20,
+    "Google Play": 16,
     "TikTok": 6,
     "App Store": 5,
     "Facebook": 1
    },
    "priority": "High",
-   "priority_score": 200,
-   "first_seen": "2026-07-23",
-   "last_seen": "2026-10-16",
+   "priority_score": 194,
+   "first_seen": "2026-07-31",
+   "last_seen": "2026-10-23",
    "quotes": [
     {
      "es": "Ustedes cómo proveedores son los peores de todos y de igual manera el Tigo, suben los precios y su velocidad es asquerosa y más con la limitación dia, y para rematar su aplicaciones  para los días extras pide tarjeta visa, etc, y yappi, no se puede con saldo. Además, su aplicación ni siquiera funciona como debe de ser,",
@@ -1459,11 +1496,11 @@
      "method": null
     },
     {
-     "es": "Uyyyy @TigoPanama Y @MasMovilPanama ya esta una empresa q estaba en Chiriqui y Santiago esta en el west... voy a ver q ofrecen xq como @AsepPanama les permite q suban cuando ustedes quieran a ver si ustedes se acomodan y dejen de ser hambrientos.. Toy bien molesta con ese aumento",
-     "en": "Uyyyy @TigoPanama Y @MasMovilPanama already this a company q was in Chiriqui and Santiago is in the west... I will see q offer xq as @AsepPanama allows you to go up when you want to see if you will settle in and stop being hungry.. I am very upset with that increase.",
+     "es": "Yo odio sobremanera la señal de @MasMovilPanama aparte de que encarecen sus precios, su cobertura es una mierda y su señal se cae a cada rato, los detestooooooo! Encima me obligaron a usarlos porque nunca desde que tuve mayoría de edad quise nada con esa basura y compraron claro.",
+     "en": "I very much hate the @MasMovilPanama sign apart from their pricing, their coverage sucks and their signal falls off every second, they detestooooooo! On top of that they forced me to use them because I never since I was of age wanted anything with that garbage and they bought clear.",
      "channel": "X",
-     "date": "24 Jul 2026",
-     "url": "https://x.com/Mey_2483/status/2080676727982821613",
+     "date": "25 Sep 2026",
+     "url": "https://x.com/KpherMichael/status/2103284286908489983",
      "rating": null,
      "method": null
     }
@@ -1497,35 +1534,26 @@
    "category": "Non-app / service issues",
    "label": "Customer service & call-centre experience",
    "severity": 2,
-   "n": 84,
-   "pct": 4.6,
+   "n": 83,
+   "pct": 4.5,
    "pct_base": "all feedback",
    "pct_complaints": 24.6,
-   "n_rule": 84,
+   "n_rule": 83,
    "n_embedding": 0,
-   "n_negative": 70,
+   "n_negative": 69,
    "n_requests": 9,
    "channels": {
     "X": 33,
     "Instagram": 30,
     "Facebook": 13,
     "App Store": 4,
-    "Google Play": 4
+    "Google Play": 3
    },
    "priority": "High",
-   "priority_score": 168,
-   "first_seen": "2026-07-23",
+   "priority_score": 166,
+   "first_seen": "2026-07-31",
    "last_seen": "2026-10-10",
    "quotes": [
-    {
-     "es": "No funciona como lo pintan, en las áreas donde hay montañas ejemplo Hornito Valle la Mina, vía gualaca. Absolutamente nada,esperando.",
-     "en": "It doesn't work as they paint it, in areas where there are mountains example Hornito Valle la Mina, via gualaca. Absolutely nothing, waiting.",
-     "channel": "Google Play",
-     "date": "23 Jul 2026",
-     "url": "https://play.google.com/store/apps/details?id=com.cwp.app&hl=es&gl=PA&reviewId=55b0b710-872d-47bb-9a78-84ade007fa3c",
-     "rating": 3.0,
-     "method": "rule"
-    },
     {
      "es": "muy mal asesoramiento del asesor comercial Anderson martinez, donde la fecha 19 de agosto del 2026 , informa que llega la factura pospago y hogar el mismo día que vence el de hogar pero hoy 4 de septiembre llega un mensaje que el plan vence , solo ha pasado 14 días y ya están cobrando , donde informa que en un mes se p",
      "en": "very bad advice from the commercial advisor Anderson Martinez, where the date August 19, 2026, reports that the postpaid bill arrives and home the same day that the home one expires but today 4 September arrives a message that the plan expires, it has only been 14 days and are already charging, where it reports that in",
@@ -1543,6 +1571,15 @@
      "url": "https://www.instagram.com/p/DdjS5F9R62i/",
      "rating": null,
      "method": "rule"
+    },
+    {
+     "es": "Hace 1 semana me cambie y ya estoy arrepentida, hoy he oasado 4 horas tratando de que alguien me ayude porque los canales se congelan y luego que disque descargando programa, primero llame me desvio a atencion por chat y señores es ahi donde nadie te atiende o solamente para preguntar repetidamente tus datos",
+     "en": "1 week ago I changed and I'm already sorry, today I've heard 4 hours trying to get someone to help me because the channels freeze and then I shoot downloading program, first I call I turned to attention by chat and gentlemen is there where no one attends you or only to ask repeatedly your data",
+     "channel": "Instagram",
+     "date": "24 Sep 2026",
+     "url": "https://www.instagram.com/p/Dc1qfuHJBW2/",
+     "rating": null,
+     "method": null
     }
    ],
    "request_quotes": [
@@ -1565,7 +1602,7 @@
      "method": null
     }
    ],
-   "evidence_url": "https://play.google.com/store/apps/details?id=com.cwp.app&hl=es&gl=PA&reviewId=55b0b710-872d-47bb-9a78-84ade007fa3c",
+   "evidence_url": "https://play.google.com/store/apps/details?id=com.cwp.app&hl=es&gl=PA&reviewId=4e16a44b-215b-4c09-8134-c6d97ce2327e",
    "user_need": "Faster, one-channel resolution",
    "product_change": "Non-app: customer care. In-app: case tracking with status, and chat handoff that keeps context (no call → chat → branch runaround)"
   }
