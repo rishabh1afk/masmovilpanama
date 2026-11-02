@@ -1,20 +1,20 @@
 {
- "generated_at": "2026-10-26T01:22:39.554009+00:00",
+ "generated_at": "2026-11-02T01:40:15.748411+00:00",
  "rules_version": 5,
  "coverage": {
-  "n_items": 1833,
-  "n_app": 1000,
-  "n_app_issue": 173,
-  "n_nonapp": 338,
-  "start": "2026-07-26",
-  "end": "2026-10-24",
+  "n_items": 1815,
+  "n_app": 1007,
+  "n_app_issue": 162,
+  "n_nonapp": 336,
+  "start": "2026-08-02",
+  "end": "2026-10-31",
   "channels": {
-   "App Store": 71,
+   "App Store": 77,
    "Facebook": 63,
-   "Google Play": 915,
+   "Google Play": 916,
    "Instagram": 380,
    "TikTok": 81,
-   "X": 323
+   "X": 298
   }
  },
  "method": {
@@ -26,8 +26,8 @@
  "categories": [
   {
    "category": "Bugs & Technical Issues",
-   "n": 72,
-   "pct": 7.2,
+   "n": 67,
+   "pct": 6.7,
    "subissues": [
     "bug_errors",
     "bug_login",
@@ -38,8 +38,8 @@
   },
   {
    "category": "Payments & Transactions",
-   "n": 60,
-   "pct": 6.0,
+   "n": 50,
+   "pct": 5.0,
    "subissues": [
     "pay_failed",
     "pay_extra_day",
@@ -63,8 +63,8 @@
   },
   {
    "category": "Connectivity & Accessibility",
-   "n": 18,
-   "pct": 1.8,
+   "n": 17,
+   "pct": 1.7,
    "subissues": [
     "conn_data_required",
     "conn_update"
@@ -82,8 +82,8 @@
   },
   {
    "category": "Missing Features",
-   "n": 10,
-   "pct": 1.0,
+   "n": 11,
+   "pct": 1.1,
    "subissues": [
     "feat_request",
     "feat_share_balance"
@@ -91,8 +91,8 @@
   },
   {
    "category": "Non-app / service issues",
-   "n": 338,
-   "pct": 18.4,
+   "n": 336,
+   "pct": 18.5,
    "subissues": [
     "svc_network",
     "svc_pricing",
@@ -109,19 +109,19 @@
    "n": 14,
    "pct": 1.4,
    "pct_base": "app feedback",
-   "pct_complaints": 8.1,
-   "n_rule": 10,
-   "n_embedding": 4,
+   "pct_complaints": 8.6,
+   "n_rule": 9,
+   "n_embedding": 5,
    "n_negative": 14,
-   "n_requests": 1,
+   "n_requests": 2,
    "channels": {
     "Google Play": 13,
     "Instagram": 1
    },
    "priority": "High",
    "priority_score": 42,
-   "first_seen": "2026-07-29",
-   "last_seen": "2026-10-03",
+   "first_seen": "2026-08-05",
+   "last_seen": "2026-10-30",
    "quotes": [
     {
      "es": "La aplicación no parece funcionar correctamente. Cada vez que intento usarla, me aparece un error que me indica descargarla desde Google Play. Lo he hecho, pero sigue ocurriendo lo mismo. ¿Podría alguien explicármelo, por favor?",
@@ -151,7 +151,17 @@
      "method": "rule"
     }
    ],
-   "request_quotes": [],
+   "request_quotes": [
+    {
+     "es": "La app no es gratis, sin el uso de datos la app es obsoleto, espero que arreglen muy eso..",
+     "en": "The app is not free, without the use of data the app is obsolete, I hope you fix that very..",
+     "channel": "Google Play",
+     "date": "27 Oct 2026",
+     "url": "https://play.google.com/store/apps/details?id=com.cwp.app&hl=es&gl=PA&reviewId=25d1eb7f-39e8-4664-8022-6f50392d2925",
+     "rating": 1.0,
+     "method": "embedding"
+    }
+   ],
    "evidence_url": "https://play.google.com/store/apps/details?id=com.cwp.app&hl=es&gl=PA&reviewId=7381bdcd-cd1b-4c52-a713-e03675ab0af0",
    "user_need": "Use the app installed from Google Play without 'modified app' / USB-debugging blocks",
    "product_change": "Re-tune the integrity/root check: allow Play-installed builds and Developer Options/USB debugging, block only real tampering, and explain the reason with a help link instead of a hard block"
@@ -161,22 +171,22 @@
    "category": "Bugs & Technical Issues",
    "label": "Can't log in / sign-in & verification code failures",
    "severity": 3,
-   "n": 22,
-   "pct": 2.2,
+   "n": 19,
+   "pct": 1.9,
    "pct_base": "app feedback",
-   "pct_complaints": 12.7,
-   "n_rule": 18,
-   "n_embedding": 4,
-   "n_negative": 22,
+   "pct_complaints": 11.7,
+   "n_rule": 17,
+   "n_embedding": 2,
+   "n_negative": 19,
    "n_requests": 0,
    "channels": {
-    "Google Play": 19,
-    "App Store": 3
+    "Google Play": 17,
+    "App Store": 2
    },
    "priority": "High",
-   "priority_score": 66,
-   "first_seen": "2026-07-29",
-   "last_seen": "2026-10-20",
+   "priority_score": 57,
+   "first_seen": "2026-08-03",
+   "last_seen": "2026-10-31",
    "quotes": [
     {
      "es": "Se actualizó o algo y ya no puedo ingresar. Intento ingresar mi contraseña y me dice que no es la correcta. intento ingresar por OTP y los códigos que envían me dicen que no son correctos. Estoy fuera de mi cuenta otra vez. TODO MAL.",
@@ -197,11 +207,11 @@
      "method": "rule"
     },
     {
-     "es": "No puedo registrarme. Me pide ingresar un código de verificación pero hace rato estoy esperándolo y nada que me llega",
-     "en": "He asks me to enter a verification code, but I've been waiting for him for a while and nothing comes to me.",
-     "channel": "App Store",
-     "date": "31 Aug 2026",
-     "url": "https://apps.apple.com/pa/app/mi-mas/id1391146262?see-all=reviews",
+     "es": "desde que actualicé noche podido entrar, me dice que no es mi contraseña, restablezco contraseña y nada, intento por OTP (código por SmS) y nada, envía error entonces. Llame al operador y tampoco pudo resolverme.",
+     "en": "Since I updated the night I was able to enter, it tells me that it is not my password, I reset password and nothing, I try OTP (code by SmS) and nothing, it sends error then. Call the operator and it could not solve me either.",
+     "channel": "Google Play",
+     "date": "31 Oct 2026",
+     "url": "https://play.google.com/store/apps/details?id=com.cwp.app&hl=es&gl=PA&reviewId=d2319e7a-347e-40bb-8e21-b0f440660034",
      "rating": 1.0,
      "method": "rule"
     }
@@ -216,22 +226,21 @@
    "category": "Bugs & Technical Issues",
    "label": "App won't open, crashes, freezes or keeps loading",
    "severity": 3,
-   "n": 4,
-   "pct": 0.4,
+   "n": 3,
+   "pct": 0.3,
    "pct_base": "app feedback",
-   "pct_complaints": 2.3,
-   "n_rule": 4,
+   "pct_complaints": 1.9,
+   "n_rule": 3,
    "n_embedding": 0,
    "n_negative": 3,
    "n_requests": 0,
    "channels": {
     "Google Play": 2,
-    "App Store": 1,
     "X": 1
    },
    "priority": "Low",
-   "priority_score": 12,
-   "first_seen": "2026-07-30",
+   "priority_score": 9,
+   "first_seen": "2026-09-03",
    "last_seen": "2026-10-14",
    "quotes": [
     {
@@ -251,15 +260,6 @@
      "url": "https://play.google.com/store/apps/details?id=com.cwp.app&hl=es&gl=PA&reviewId=89cd5b3c-c587-465e-8ddb-6bc09f934364",
      "rating": 2.0,
      "method": "rule"
-    },
-    {
-     "es": "Pago con la TC. La mayoría de las veces se congela al momento de hacer los pagos desde la tarjeta registrada.",
-     "en": "Payment with the TC. Most of the time it freezes at the time of making payments from the registered card.",
-     "channel": "App Store",
-     "date": "30 Jul 2026",
-     "url": "https://apps.apple.com/pa/app/mi-mas/id1391146262?see-all=reviews",
-     "rating": 3.0,
-     "method": "rule"
     }
    ],
    "request_quotes": [],
@@ -272,22 +272,22 @@
    "category": "Bugs & Technical Issues",
    "label": "Errors / 'under maintenance' / features not working",
    "severity": 2,
-   "n": 32,
-   "pct": 3.2,
+   "n": 31,
+   "pct": 3.1,
    "pct_base": "app feedback",
-   "pct_complaints": 18.5,
-   "n_rule": 28,
-   "n_embedding": 4,
-   "n_negative": 32,
+   "pct_complaints": 19.1,
+   "n_rule": 29,
+   "n_embedding": 2,
+   "n_negative": 31,
    "n_requests": 2,
    "channels": {
-    "Google Play": 26,
-    "App Store": 6
+    "Google Play": 24,
+    "App Store": 7
    },
    "priority": "High",
-   "priority_score": 64,
-   "first_seen": "2026-07-28",
-   "last_seen": "2026-10-22",
+   "priority_score": 62,
+   "first_seen": "2026-08-06",
+   "last_seen": "2026-10-29",
    "quotes": [
     {
      "es": "Mala, no sirve para lo que realmente se necesita, no entiendo porqué sugieren el uso de la aplicación para realizar pagos si para eso es lo que menos sirve; llevo 4 meses intentando hacer pagos con la tarjeta de crédito y no he podido realizarlos a través la aplicación.",
@@ -382,34 +382,25 @@
    "category": "Payments & Transactions",
    "label": "Payments / recharges fail or card is rejected",
    "severity": 3,
-   "n": 24,
-   "pct": 2.4,
+   "n": 18,
+   "pct": 1.8,
    "pct_base": "app feedback",
-   "pct_complaints": 13.9,
-   "n_rule": 18,
-   "n_embedding": 6,
-   "n_negative": 24,
+   "pct_complaints": 11.1,
+   "n_rule": 15,
+   "n_embedding": 3,
+   "n_negative": 18,
    "n_requests": 0,
    "channels": {
-    "Google Play": 20,
+    "Google Play": 14,
     "App Store": 2,
     "Instagram": 1,
     "X": 1
    },
    "priority": "High",
-   "priority_score": 72,
-   "first_seen": "2026-07-28",
-   "last_seen": "2026-10-19",
+   "priority_score": 54,
+   "first_seen": "2026-08-07",
+   "last_seen": "2026-10-28",
    "quotes": [
-    {
-     "es": "esta muy bien la aplicación exelente pero hoy 27/7/2026 tuve un problema meti una tarjeta de 5$ y queria poner la promoción de 1 dia adicional y la oferta estaba en mantenimiento y espere y por esperar me empezaron a cobrar centavos en total me cobraron 80¢ de los 5$ y tuve que comprar una tarjeta de 3 dias 😠😠",
-     "en": "This is very good the excellent application but today 27/7/2026 I had a problem put a 5$ card and I wanted to put the promotion of 1 additional day and the offer was in maintenance and wait and by waiting I started to charge pennies in total 80¢ of the 5$ and I had to buy a 3 day card",
-     "channel": "Google Play",
-     "date": "28 Jul 2026",
-     "url": "https://play.google.com/store/apps/details?id=com.cwp.app&hl=es&gl=PA&reviewId=76618126-7205-400d-8213-56ff45139b9e",
-     "rating": 3.0,
-     "method": "rule"
-    },
     {
      "es": "@MasMovilPanama  @AsepPanama  tengo una denuncia el día de hoy me contacte a través de la app por un problema devuna tarjeta, sin embargo me hackearon mi número de WhatsApp y solicitaban dinero a otras personas.\n\nPero todo fue por contarlo a través del app de Mas Móvil.",
      "en": "@MasMovilPanama @AsepPanama I have a complaint today contact me through the app for a problem devuna card, however they hacked me my WhatsApp number and asked other people for money. But it was all by telling it through the Mas Mobile app.",
@@ -417,6 +408,15 @@
      "date": "03 Sep 2026",
      "url": "https://x.com/alexanderpk06/status/2095354467046560169",
      "rating": null,
+     "method": "rule"
+    },
+    {
+     "es": "Instalé el app y seguí los pasos para hacer la recarga desde Yappy, pero al hacerla, el app marcó error y nunca aplicó el paquete. Al marcar a atención al cliente, seguí las instrucciones de la IA para hablar con un agente, pero nunca me respondieron.",
+     "en": "I installed the app and followed the steps to do the reloading from Yappy, but in doing so, the app marked error and never applied the package. By calling customer service, I followed the AI instructions to talk to an agent, but they never answered me.",
+     "channel": "Google Play",
+     "date": "28 Oct 2026",
+     "url": "https://play.google.com/store/apps/details?id=com.cwp.app&hl=es&gl=PA&reviewId=dfd7d9cc-0b48-4a92-9ca8-e5e86c87ca6f",
+     "rating": 3.0,
      "method": "rule"
     },
     {
@@ -430,7 +430,7 @@
     }
    ],
    "request_quotes": [],
-   "evidence_url": "https://play.google.com/store/apps/details?id=com.cwp.app&hl=es&gl=PA&reviewId=76618126-7205-400d-8213-56ff45139b9e",
+   "evidence_url": "https://x.com/alexanderpk06/status/2095354467046560169",
    "user_need": "Pay or recharge with a saved Visa / credit / debit card without errors",
    "product_change": "Audit the card-payment flow end to end (gateway errors, saved-card tokens, 'no tengo internet' false errors); show a clear failure reason and a one-tap retry or switch-method; add payment-failure monitoring per method"
   },
@@ -439,23 +439,22 @@
    "category": "Payments & Transactions",
    "label": "Recharge bonus ('día extra' / extra days) not selectable or not applied",
    "severity": 2,
-   "n": 17,
-   "pct": 1.7,
+   "n": 14,
+   "pct": 1.4,
    "pct_base": "app feedback",
-   "pct_complaints": 9.8,
-   "n_rule": 15,
-   "n_embedding": 2,
-   "n_negative": 16,
-   "n_requests": 4,
+   "pct_complaints": 8.6,
+   "n_rule": 13,
+   "n_embedding": 1,
+   "n_negative": 13,
+   "n_requests": 3,
    "channels": {
-    "Google Play": 11,
+    "Google Play": 9,
     "Instagram": 4,
-    "App Store": 1,
     "X": 1
    },
    "priority": "Medium",
-   "priority_score": 34,
-   "first_seen": "2026-07-28",
+   "priority_score": 28,
+   "first_seen": "2026-08-15",
    "last_seen": "2026-10-13",
    "quotes": [
     {
@@ -515,20 +514,20 @@
    "category": "Payments & Transactions",
    "label": "Charged but recharge / package not applied, or double charge",
    "severity": 3,
-   "n": 2,
-   "pct": 0.2,
+   "n": 1,
+   "pct": 0.1,
    "pct_base": "app feedback",
-   "pct_complaints": 1.2,
-   "n_rule": 2,
+   "pct_complaints": 0.6,
+   "n_rule": 1,
    "n_embedding": 0,
-   "n_negative": 2,
+   "n_negative": 1,
    "n_requests": 0,
    "channels": {
-    "Google Play": 2
+    "Google Play": 1
    },
    "priority": "Low",
-   "priority_score": 6,
-   "first_seen": "2026-08-01",
+   "priority_score": 3,
+   "first_seen": "2026-09-12",
    "last_seen": "2026-09-12",
    "quotes": [
     {
@@ -537,15 +536,6 @@
      "channel": "Google Play",
      "date": "12 Sep 2026",
      "url": "https://play.google.com/store/apps/details?id=com.cwp.app&hl=es&gl=PA&reviewId=b624343d-0dcc-44b4-8642-cdb251bd7bb5",
-     "rating": 1.0,
-     "method": "rule"
-    },
-    {
-     "es": "la app como tal no sirve para comprar paquetes o reclamar premios; compre data de 1 dia hace 1 mes x el app y todavia estoy esperando el paquete. hoy me salio 1 giro gratis y me gane 1 dia de WhatsApp gratis y 50 puntos . entre al app a reclamar y no aparece por ningún lado nada para reclamar el premio. aparte que me r",
-     "en": "the app as such does not serve to buy packages or claim prizes; buy 1 day data 1 month ago x the app and I am still waiting for the package. today I got 1 free spin and I won 1 day WhatsApp free and 50 points . enter the app to claim and nothing appears anywhere to claim the prize. apart from that I stole the $3 I had ",
-     "channel": "Google Play",
-     "date": "01 Aug 2026",
-     "url": "https://play.google.com/store/apps/details?id=com.cwp.app&hl=es&gl=PA&reviewId=b437d6dd-5558-4dd4-b680-b0e38f936234",
      "rating": 1.0,
      "method": "rule"
     }
@@ -563,7 +553,7 @@
    "n": 4,
    "pct": 0.4,
    "pct_base": "app feedback",
-   "pct_complaints": 2.3,
+   "pct_complaints": 2.5,
    "n_rule": 4,
    "n_embedding": 0,
    "n_negative": 4,
@@ -618,7 +608,7 @@
    "n": 10,
    "pct": 1.0,
    "pct_base": "app feedback",
-   "pct_complaints": 5.8,
+   "pct_complaints": 6.2,
    "n_rule": 10,
    "n_embedding": 0,
    "n_negative": 10,
@@ -681,33 +671,24 @@
    "category": "Payments & Transactions",
    "label": "Limited payment methods (Yappy-only offers, card/ACH options)",
    "severity": 2,
-   "n": 13,
-   "pct": 1.3,
+   "n": 12,
+   "pct": 1.2,
    "pct_base": "app feedback",
-   "pct_complaints": 7.5,
-   "n_rule": 13,
+   "pct_complaints": 7.4,
+   "n_rule": 12,
    "n_embedding": 0,
-   "n_negative": 12,
+   "n_negative": 11,
    "n_requests": 4,
    "channels": {
-    "Google Play": 11,
+    "Google Play": 10,
     "App Store": 1,
     "Instagram": 1
    },
    "priority": "Medium",
-   "priority_score": 26,
-   "first_seen": "2026-07-31",
-   "last_seen": "2026-10-17",
+   "priority_score": 24,
+   "first_seen": "2026-09-07",
+   "last_seen": "2026-10-28",
    "quotes": [
-    {
-     "es": "wao es horrible me recargue desde aquí para ahorrar y pasarle data a mi novia y ni siquiera duro el minuto ni puedo usar a comparación cuando recargo normal por tarjeta desde el yappy le puedo compartir por mucho más tiempo o hasta días pésima app y primeras impresiones",
-     "en": "wao it's horrible to charge me from here to save and pass data to my girlfriend and not even last the minute nor can I use it compared when normal card surcharge from the yappy I can share you for much longer or up to lousy days app and first impressions",
-     "channel": "Google Play",
-     "date": "31 Jul 2026",
-     "url": "https://play.google.com/store/apps/details?id=com.cwp.app&hl=es&gl=PA&reviewId=726d0548-6d8d-4d00-ab13-b7f3ab5e37ec",
-     "rating": 1.0,
-     "method": "rule"
-    },
     {
      "es": "Imposible agregar ninguna tarjeta u otro método de pago o pagas con yappy o no lo haces. Al ejecutivo o \"profesional\" encargado de la última actualización deberían botarlo. Dejo 3 solo porque menos mal la página web trabaja bien para eso. Arreglen la app sinvergüenzas.",
      "en": "It is impossible to add any card or other payment method or you pay with yappy or you do not. The executive or \"professional\" in charge of the latest update should be launched. I leave 3 only because less badly the website works well for that. Fix the app scoundrels.",
@@ -725,10 +706,19 @@
      "url": "https://play.google.com/store/apps/details?id=com.cwp.app&hl=es&gl=PA&reviewId=ed4cf052-d4aa-4884-ac95-c103be42b90d",
      "rating": 1.0,
      "method": "rule"
+    },
+    {
+     "es": "para las famosas promos si usas saldo que ya tienes en tu cel recargado no te deja pero cambias a otro método de pago si lo tramposos.",
+     "en": "for the famous promos if you use balance that you already have in your recharged cell does not leave you but you switch to another payment method if you cheat it.",
+     "channel": "Google Play",
+     "date": "12 Sep 2026",
+     "url": "https://play.google.com/store/apps/details?id=com.cwp.app&hl=es&gl=PA&reviewId=81d7a9b4-b652-4232-bb4d-3aa6addafd1d",
+     "rating": 2.0,
+     "method": "rule"
     }
    ],
    "request_quotes": [],
-   "evidence_url": "https://play.google.com/store/apps/details?id=com.cwp.app&hl=es&gl=PA&reviewId=726d0548-6d8d-4d00-ab13-b7f3ab5e37ec",
+   "evidence_url": "https://play.google.com/store/apps/details?id=com.cwp.app&hl=es&gl=PA&reviewId=bca3141b-b8a7-4cba-9d1b-9d92b510d54d",
    "user_need": "Choose any payment method (card, debit, scratch-card balance), not only Yappy",
    "product_change": "Offer the same promos across all payment methods, or show clearly which method each promo needs; let users add and save multiple cards; fix 'método de pago en mantenimiento'"
   },
@@ -821,20 +811,20 @@
    "n": 22,
    "pct": 2.2,
    "pct_base": "app feedback",
-   "pct_complaints": 12.7,
+   "pct_complaints": 13.6,
    "n_rule": 22,
    "n_embedding": 0,
-   "n_negative": 19,
-   "n_requests": 4,
+   "n_negative": 20,
+   "n_requests": 5,
    "channels": {
     "Google Play": 20,
-    "App Store": 1,
-    "Instagram": 1
+    "Instagram": 1,
+    "App Store": 1
    },
    "priority": "Medium",
    "priority_score": 22,
-   "first_seen": "2026-07-29",
-   "last_seen": "2026-10-15",
+   "first_seen": "2026-08-09",
+   "last_seen": "2026-10-30",
    "quotes": [
     {
      "es": "no se como es posible que tenia 1950 puntos acumulados en el app mas movil y de la nada me sale que el 31 de julio los utilicé, que fraude. Además, la potabilidad sigue lo mismo que hace año ½. por favor mejoren a más móvil sigo cuando venga otra telefónica con mejores promos se les van a ir.",
@@ -855,31 +845,31 @@
      "method": "rule"
     },
     {
-     "es": "No se entienden sus dinámicas ni sus promociones de regalos. No se puede comprar recargas sin tener datos. No funciona el pago por tarjeta de crédito.",
-     "en": "You don't understand your dynamics or your gift promotions. You can't buy refills without data. It doesn't work paying by credit card.",
+     "es": "todavía no los entiendo 😡 estoy cansado de sus mensajes Harto y para mi es engaño porque entro a más móvil y no puedo reclamar los supuestos premios así que por favor sean serios",
+     "en": "I still don't understand them. I'm tired of your messages.",
      "channel": "Google Play",
-     "date": "15 Sep 2026",
-     "url": "https://play.google.com/store/apps/details?id=com.cwp.app&hl=es&gl=PA&reviewId=7a09322b-7b68-45d0-9351-508b27104798",
+     "date": "29 Oct 2026",
+     "url": "https://play.google.com/store/apps/details?id=com.cwp.app&hl=es&gl=PA&reviewId=b106d1e8-0511-4bce-9410-89153e555b12",
      "rating": 1.0,
      "method": "rule"
     }
    ],
    "request_quotes": [
     {
+     "es": "Nunca eh podido ingresar y no puedo usar mis regalos ni canjear mis puntos me ayudan por favor me sale que no 🚫",
+     "en": "I've never been able to enter and I can't use my gifts or redeem my points help me please it comes out that I don't",
+     "channel": "Google Play",
+     "date": "27 Oct 2026",
+     "url": "https://play.google.com/store/apps/details?id=com.cwp.app&hl=es&gl=PA&reviewId=29d8f658-04f9-4e5a-86b0-7ba356c453f9",
+     "rating": 1.0,
+     "method": "rule"
+    },
+    {
      "es": "grasias por darme unas buenas jugadas , tambien me gustaria una promosion espesial , porfavor y grasias",
      "en": "grases for giving me some good plays, I would also like a thick promosion, please and grases",
      "channel": "Google Play",
      "date": "09 Aug 2026",
      "url": "https://play.google.com/store/apps/details?id=com.cwp.app&hl=es&gl=PA&reviewId=5ae8d574-ce91-4c4b-8a80-ed50ca8c031e",
-     "rating": 5.0,
-     "method": "rule"
-    },
-    {
-     "es": "Regalen más premios porfa 😊",
-     "en": "Give more prizes please",
-     "channel": "Google Play",
-     "date": "01 Aug 2026",
-     "url": "https://play.google.com/store/apps/details?id=com.cwp.app&hl=es&gl=PA&reviewId=e1a2764c-be17-48d2-b424-0b3706d9a373",
      "rating": 5.0,
      "method": "rule"
     }
@@ -896,9 +886,9 @@
    "n": 6,
    "pct": 0.6,
    "pct_base": "app feedback",
-   "pct_complaints": 3.5,
-   "n_rule": 6,
-   "n_embedding": 0,
+   "pct_complaints": 3.7,
+   "n_rule": 5,
+   "n_embedding": 1,
    "n_negative": 4,
    "n_requests": 4,
    "channels": {
@@ -906,7 +896,7 @@
    },
    "priority": "Low",
    "priority_score": 12,
-   "first_seen": "2026-07-29",
+   "first_seen": "2026-08-12",
    "last_seen": "2026-10-01",
    "quotes": [
     {
@@ -928,17 +918,6 @@
      "method": "rule"
     },
     {
-     "es": "mala xq si no hay data no abre no es como tigo entras al ap sin data y compras tu paquete",
-     "en": "bad xq if no data doesn't open it's not like you enter the ap without data and buy your package",
-     "channel": "Google Play",
-     "date": "29 Jul 2026",
-     "url": "https://play.google.com/store/apps/details?id=com.cwp.app&hl=es&gl=PA&reviewId=d63ecb8b-27ff-414d-abc1-b64da76df11e",
-     "rating": 1.0,
-     "method": "rule"
-    }
-   ],
-   "request_quotes": [
-    {
      "es": "La app es buena pero hay 2 cosas que serían buenas 1. Si tengo saldo para comprar un paquete de datos pero me quede sin data y en el momento no tengo opción a un WiFi no puedo hacer nada necesito data para entrar al app y comprar el paquete o el plan de datos. 2. Sería bueno q colocarán la hora en q se hace la compra d",
      "en": "The app is good but there are 2 things that would be good 1. If I have balance to buy a data package but I run out of data and at the moment I have no choice to a WiFi I can not do anything I need data to enter the app and buy the package or data plan. 2. It would be good to place the time in which the purchase of the ",
      "channel": "Google Play",
@@ -948,6 +927,7 @@
      "method": "rule"
     }
    ],
+   "request_quotes": [],
    "evidence_url": "https://play.google.com/store/apps/details?id=com.cwp.app&hl=es&gl=PA&reviewId=39741129-748b-4392-b603-dee328546c49",
    "user_need": "Find, buy and change plans or packages in the app",
    "product_change": "Make the package catalogue always visible (even with no data); add 'change my plan'; confirm activation immediately after purchase"
@@ -994,22 +974,22 @@
    "category": "Connectivity & Accessibility",
    "label": "App needs mobile data / doesn't work on Wi-Fi or with zero balance",
    "severity": 3,
-   "n": 17,
-   "pct": 1.7,
+   "n": 16,
+   "pct": 1.6,
    "pct_base": "app feedback",
-   "pct_complaints": 9.8,
-   "n_rule": 16,
-   "n_embedding": 1,
-   "n_negative": 15,
-   "n_requests": 6,
+   "pct_complaints": 9.9,
+   "n_rule": 14,
+   "n_embedding": 2,
+   "n_negative": 14,
+   "n_requests": 7,
    "channels": {
-    "Google Play": 16,
+    "Google Play": 15,
     "App Store": 1
    },
    "priority": "High",
-   "priority_score": 51,
-   "first_seen": "2026-07-29",
-   "last_seen": "2026-10-19",
+   "priority_score": 48,
+   "first_seen": "2026-08-10",
+   "last_seen": "2026-10-25",
    "quotes": [
     {
      "es": "Cómo se supone que uno va comprar data, si para entrar a la app necesita data, si estoy comprando es por no tengo y necesito comprar, otra cosa había un canje y no me dieron nadaaa solo aparecía como si lo hubiera recibido",
@@ -1161,7 +1141,7 @@
    "n": 3,
    "pct": 0.3,
    "pct_base": "app feedback",
-   "pct_complaints": 1.7,
+   "pct_complaints": 1.9,
    "n_rule": 3,
    "n_embedding": 0,
    "n_negative": 3,
@@ -1207,7 +1187,7 @@
    "n": 6,
    "pct": 0.6,
    "pct_base": "app feedback",
-   "pct_complaints": 3.5,
+   "pct_complaints": 3.7,
    "n_rule": 5,
    "n_embedding": 1,
    "n_negative": 6,
@@ -1305,21 +1285,22 @@
    "category": "Missing Features",
    "label": "Other explicit feature requests",
    "severity": 1,
-   "n": 8,
-   "pct": 0.8,
+   "n": 9,
+   "pct": 0.9,
    "pct_base": "app feedback",
-   "pct_complaints": 4.6,
-   "n_rule": 8,
+   "pct_complaints": 5.6,
+   "n_rule": 9,
    "n_embedding": 0,
    "n_negative": 4,
-   "n_requests": 6,
+   "n_requests": 7,
    "channels": {
-    "Google Play": 8
+    "Google Play": 8,
+    "App Store": 1
    },
    "priority": "Low",
-   "priority_score": 8,
+   "priority_score": 9,
    "first_seen": "2026-08-14",
-   "last_seen": "2026-10-21",
+   "last_seen": "2026-10-30",
    "quotes": [
     {
      "es": "Sería bueno que se pudiera configurar el wi-fi y el internet de casa mediante la página web o la aplicación porque te manda para una aplicación que no está disponible en Panamá",
@@ -1360,11 +1341,11 @@
      "method": "rule"
     },
     {
-     "es": "buena a pp solo que deberían poner que con 3 dolar uno pueda tener wassap por 4 días como antes",
-     "en": "good to pp only that should put that with 3 dollar one can have wassap for 4 days as before",
-     "channel": "Google Play",
-     "date": "03 Sep 2026",
-     "url": "https://play.google.com/store/apps/details?id=com.cwp.app&hl=es&gl=PA&reviewId=b7d50850-34ed-4bef-b9e0-124047365adb",
+     "es": "Buen servicio. Me gustaría que te de opciones directas de contactar con un asesor que no fuese Whatapp solamente.",
+     "en": "Good service. I would like you to have direct options to contact a consultant other than Whatapp alone.",
+     "channel": "App Store",
+     "date": "30 Oct 2026",
+     "url": "https://apps.apple.com/pa/app/mi-mas/id1391146262?see-all=reviews",
      "rating": 5.0,
      "method": "rule"
     }
@@ -1378,45 +1359,27 @@
    "category": "Non-app / service issues",
    "label": "Network signal, coverage & outages",
    "severity": 2,
-   "n": 203,
-   "pct": 11.1,
+   "n": 199,
+   "pct": 11.0,
    "pct_base": "all feedback",
-   "pct_complaints": 60.1,
-   "n_rule": 203,
+   "pct_complaints": 59.2,
+   "n_rule": 199,
    "n_embedding": 0,
-   "n_negative": 165,
+   "n_negative": 162,
    "n_requests": 21,
    "channels": {
     "Instagram": 86,
-    "X": 41,
-    "Google Play": 27,
+    "X": 38,
+    "Google Play": 25,
     "TikTok": 25,
     "Facebook": 20,
-    "App Store": 4
+    "App Store": 5
    },
    "priority": "High",
-   "priority_score": 406,
-   "first_seen": "2026-07-29",
-   "last_seen": "2026-10-24",
+   "priority_score": 398,
+   "first_seen": "2026-08-05",
+   "last_seen": "2026-10-31",
    "quotes": [
-    {
-     "es": "tiene demasiados errores para recargar, para activar promociones, caídas de servicios, ahora si uno recarga con tarjetas ya ni el supuesto de MasApp puede activar, así que, ¿para que la app? en fin.",
-     "en": "you have too many errors to reload, to activate promotions, service falls, now if one reloads with cards already nor the MasApp assumption can activate, so, for that app? anyway.",
-     "channel": "Google Play",
-     "date": "29 Jul 2026",
-     "url": "https://play.google.com/store/apps/details?id=com.cwp.app&hl=es&gl=PA&reviewId=f38a4e2b-db31-40de-b778-8e83e061aa4d",
-     "rating": 1.0,
-     "method": "rule"
-    },
-    {
-     "es": "Promociones. Hacen buenas promociones pero no las cumplen. Mandan mensajes que aproveche un día extra de data y recargo y no me dan el dia extra. Aparte la señal no es muy buena",
-     "en": "Promotions. They do good promotions but do not fulfill them. They send messages that take advantage of an extra day of data and surcharge and do not give me the extra day. Besides the signal is not very good",
-     "channel": "App Store",
-     "date": "01 Aug 2026",
-     "url": "https://apps.apple.com/pa/app/mi-mas/id1391146262?see-all=reviews",
-     "rating": 2.0,
-     "method": "rule"
-    },
     {
      "es": "a veces sale que no puedo pagar porque \"no tengo internet\", y hay veces en las que pago y no dan los puntos mas",
      "en": "Sometimes it comes out that I can't pay because \"I don't have the internet,\" and there are times when I pay and don't give the points anymore.",
@@ -1425,6 +1388,24 @@
      "url": "https://play.google.com/store/apps/details?id=com.cwp.app&hl=es&gl=PA&reviewId=68aae3f7-d010-4126-ae1e-aee54a8c0551",
      "rating": 1.0,
      "method": "rule"
+    },
+    {
+     "es": "@MasMovilPanama @Starlink Desde hace una semana no tengo la señal del canal 500, DW. En la pantalla me aale este mensaje. Una semana es demasiado tiempo para resolver un problema técnico en una empresa de tecnología; “razones atribuíbles al proveedor” no son excusas. Mi contrato es con ustedes. https://t.co/cJUsRppKuH",
+     "en": "@MasMovilPanama @Starlink I haven't had the 500 channel signal for a week, DW. On the screen, this message is awe-in-the-box. A week is too long to solve a technical problem in a technology company; \"reasons attributable to the supplier\" are not excuses. My contract is with you. https://t.co/cJUsRppKUH",
+     "channel": "X",
+     "date": "25 Sep 2026",
+     "url": "https://x.com/GustavoBayard/status/2103499439189168295",
+     "rating": null,
+     "method": null
+    },
+    {
+     "es": "Increíble, todo preocupados x las personas y sale este muergano\nDe @FelipeChapman a pedir $ prestados y @Mayer a pedir Starlink a @elonmusk y no se había dado cuenta q nunca se cayó el internet y la señal de cel, solo se congestionó x un rato, y @MasMovilPanama activó Starlink https://t.co/sNCUSnUQFr",
+     "en": "Incredible, all worried x people and this muffled From @FelipeCappman to borrow $ and @Mayer to ask Starlink from @elonmusk and had not noticed that the internet and cell signal never fell, just got congested x for a while, and @MasMovilPanama activated Starlink https://t.co/sNCUSnUQFr",
+     "channel": "X",
+     "date": "10 Oct 2026",
+     "url": "https://x.com/Adelmino1331/status/2108859655128838362",
+     "rating": null,
+     "method": null
     }
    ],
    "request_quotes": [
@@ -1447,7 +1428,7 @@
      "method": null
     }
    ],
-   "evidence_url": "https://play.google.com/store/apps/details?id=com.cwp.app&hl=es&gl=PA&reviewId=f38a4e2b-db31-40de-b778-8e83e061aa4d",
+   "evidence_url": "https://play.google.com/store/apps/details?id=com.cwp.app&hl=es&gl=PA&reviewId=68aae3f7-d010-4126-ae1e-aee54a8c0551",
    "user_need": "Reliable signal and internet, especially during outages",
    "product_change": "Non-app: route to network operations. In-app: outage status and ETA by area, and proactive outage notifications"
   },
@@ -1459,23 +1440,23 @@
    "n": 97,
    "pct": 5.3,
    "pct_base": "all feedback",
-   "pct_complaints": 28.7,
+   "pct_complaints": 28.9,
    "n_rule": 97,
    "n_embedding": 0,
    "n_negative": 80,
    "n_requests": 5,
    "channels": {
     "Instagram": 49,
-    "X": 20,
+    "X": 19,
     "Google Play": 16,
+    "App Store": 6,
     "TikTok": 6,
-    "App Store": 5,
     "Facebook": 1
    },
    "priority": "High",
    "priority_score": 194,
-   "first_seen": "2026-07-31",
-   "last_seen": "2026-10-23",
+   "first_seen": "2026-08-06",
+   "last_seen": "2026-10-29",
    "quotes": [
     {
      "es": "Ustedes cómo proveedores son los peores de todos y de igual manera el Tigo, suben los precios y su velocidad es asquerosa y más con la limitación dia, y para rematar su aplicaciones  para los días extras pide tarjeta visa, etc, y yappi, no se puede con saldo. Además, su aplicación ni siquiera funciona como debe de ser,",
@@ -1534,26 +1515,35 @@
    "category": "Non-app / service issues",
    "label": "Customer service & call-centre experience",
    "severity": 2,
-   "n": 83,
-   "pct": 4.5,
+   "n": 86,
+   "pct": 4.7,
    "pct_base": "all feedback",
-   "pct_complaints": 24.6,
-   "n_rule": 83,
+   "pct_complaints": 25.6,
+   "n_rule": 86,
    "n_embedding": 0,
-   "n_negative": 69,
-   "n_requests": 9,
+   "n_negative": 71,
+   "n_requests": 10,
    "channels": {
-    "X": 33,
+    "X": 31,
     "Instagram": 30,
     "Facebook": 13,
-    "App Store": 4,
-    "Google Play": 3
+    "App Store": 7,
+    "Google Play": 5
    },
    "priority": "High",
-   "priority_score": 166,
-   "first_seen": "2026-07-31",
-   "last_seen": "2026-10-10",
+   "priority_score": 172,
+   "first_seen": "2026-08-05",
+   "last_seen": "2026-10-31",
    "quotes": [
+    {
+     "es": "No puedo registrarme. Me pide ingresar un código de verificación pero hace rato estoy esperándolo y nada que me llega",
+     "en": "He asks me to enter a verification code, but I've been waiting for him for a while and nothing comes to me.",
+     "channel": "App Store",
+     "date": "31 Aug 2026",
+     "url": "https://apps.apple.com/pa/app/mi-mas/id1391146262?see-all=reviews",
+     "rating": 1.0,
+     "method": "rule"
+    },
     {
      "es": "muy mal asesoramiento del asesor comercial Anderson martinez, donde la fecha 19 de agosto del 2026 , informa que llega la factura pospago y hogar el mismo día que vence el de hogar pero hoy 4 de septiembre llega un mensaje que el plan vence , solo ha pasado 14 días y ya están cobrando , donde informa que en un mes se p",
      "en": "very bad advice from the commercial advisor Anderson Martinez, where the date August 19, 2026, reports that the postpaid bill arrives and home the same day that the home one expires but today 4 September arrives a message that the plan expires, it has only been 14 days and are already charging, where it reports that in",
@@ -1571,15 +1561,6 @@
      "url": "https://www.instagram.com/p/DdjS5F9R62i/",
      "rating": null,
      "method": "rule"
-    },
-    {
-     "es": "Hace 1 semana me cambie y ya estoy arrepentida, hoy he oasado 4 horas tratando de que alguien me ayude porque los canales se congelan y luego que disque descargando programa, primero llame me desvio a atencion por chat y señores es ahi donde nadie te atiende o solamente para preguntar repetidamente tus datos",
-     "en": "1 week ago I changed and I'm already sorry, today I've heard 4 hours trying to get someone to help me because the channels freeze and then I shoot downloading program, first I call I turned to attention by chat and gentlemen is there where no one attends you or only to ask repeatedly your data",
-     "channel": "Instagram",
-     "date": "24 Sep 2026",
-     "url": "https://www.instagram.com/p/Dc1qfuHJBW2/",
-     "rating": null,
-     "method": null
     }
    ],
    "request_quotes": [
@@ -1602,7 +1583,7 @@
      "method": null
     }
    ],
-   "evidence_url": "https://play.google.com/store/apps/details?id=com.cwp.app&hl=es&gl=PA&reviewId=4e16a44b-215b-4c09-8134-c6d97ce2327e",
+   "evidence_url": "https://apps.apple.com/pa/app/mi-mas/id1391146262?see-all=reviews",
    "user_need": "Faster, one-channel resolution",
    "product_change": "Non-app: customer care. In-app: case tracking with status, and chat handoff that keeps context (no call → chat → branch runaround)"
   }
